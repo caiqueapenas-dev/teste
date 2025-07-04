@@ -436,7 +436,7 @@
             }
         };
 
-        const updateCartAndUI = () => {
+        const updateCartAndUI = (options = { rerenderFinalList: true }) => {
             const totals = calculateTotals();
             document.getElementById('view-budget-btn').disabled = totals.cartIsEmpty;
             const summaryContainer = document.getElementById('summary-totals');
@@ -454,9 +454,9 @@
                         ${serviceType === 'recorrente' && totals.monthlyTotal > 0 ? `<div><span class="text-brand-text-dark text-sm">Mensalidade: </span><span class="font-semibold text-brand-white text-lg">${formatCurrency(totals.monthlyTotal)}</span></div>` : ''}
                     </div>`;
             }
-            if (!document.getElementById('step-5').classList.contains('hidden')) {
-                renderFinalCart();
-            }
+            if (options.rerenderFinalList && !document.getElementById('step-5').classList.contains('hidden')) {
+    renderFinalCart();
+}
         };
 
         const renderFinalCart = () => {
@@ -553,7 +553,7 @@
                             <h3 class="text-xl font-bold text-brand-white">${cat.category}</h3>
                             <p class="text-brand-text-dark mt-2">${cat.description}</p>
                         </div>
-                        <div class="absolute inset-0 bg-brand-bg/70 flex flex-col items-center justify-center rounded-lg p-4 text-center backdrop-blur-sm" style="backdrop-filter: blur(2px);">
+                        <div class="absolute inset-0 bg-brand-bg/70 flex flex-col items-center justify-center rounded-lg p-4 text-center backdrop-blur-sm" style="backdrop-filter: blur(1.4px);">
                             <svg class="w-6 h-6 text-brand-bright-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                             <p class="text-sm font-semibold text-brand-text-light mt-2">Disponível no Plano Recorrente</p>
                             <button class="switch-to-recurring-btn mt-3 bg-brand-bright-blue text-white text-xs font-bold py-1 px-3 rounded-md hover:opacity-90">Mudar para Recorrente</button>
@@ -615,7 +615,7 @@
                             <p class="text-brand-text-dark mt-1 text-sm">${item.description || ''}</p>
                             <p class="text-brand-bright-blue font-semibold mt-2">${formatCurrency(item.price)} ${item.unit || ''}</p>
                         </div>
-                        <div class="absolute inset-0 bg-brand-card/50 flex flex-col items-center justify-center rounded-lg p-2 text-center backdrop-blur-sm" style="backdrop-filter: blur(2px);">
+                        <div class="absolute inset-0 bg-brand-card/50 flex flex-col items-center justify-center rounded-lg p-2 text-center backdrop-blur-sm" style="backdrop-filter: blur(1.4px);">
                             <svg class="w-8 h-8 text-brand-bright-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                             <button class="switch-to-recurring-btn mt-2 bg-brand-bright-blue text-white text-xs font-bold py-1 px-3 rounded-md hover:opacity-90">Mudar para Recorrente</button>
                         </div>
@@ -801,20 +801,27 @@
     updateCartAndUI(); // Atualiza o rodapé com o total geral
 }}
             const finalCartTarget = e.target.closest('[data-id]');
-            if (e.target.closest('#final-cart-items') && finalCartTarget) {
-                const id = finalCartTarget.dataset.id;
-                 if (finalCartTarget.matches('.remove-item-btn')) {
-                    delete cart[id];
-                    if (id === 'trafego_gestao') delete cart['trafego_investimento_custom'];
-                } else if (finalCartTarget.matches('.quantity-change-final-btn')) {
-                    const currentQty = cart[id] || 0;
-                    const action = finalCartTarget.dataset.action;
-                    const newQty = action === 'increase' ? currentQty + 1 : Math.max(0, currentQty - 1);
-                    if (newQty === 0) delete cart[id];
-                    else cart[id] = newQty;
-                }
-                updateCartAndUI();
-            }
+if (e.target.closest('#final-cart-items') && finalCartTarget) {
+    const id = finalCartTarget.dataset.id;
+
+    if (finalCartTarget.matches('.remove-item-btn')) {
+        delete cart[id];
+        if (id === 'trafego_gestao') delete cart['trafego_investimento_custom'];
+        updateCartAndUI({ rerenderFinalList: true }); // Redesenha a lista para remover o item
+    } 
+    else if (finalCartTarget.matches('.quantity-change-final-btn')) {
+        const currentQty = cart[id] || 0;
+        const action = finalCartTarget.dataset.action;
+        const newQty = action === 'increase' ? currentQty + 1 : Math.max(0, currentQty - 1);
+        
+        handleQuantityChange(id, newQty); // Cuida do carrinho e dos toasts
+
+        // Atualiza a UI sem redesenhar a lista inteira
+        finalCartTarget.parentElement.querySelector('input').value = newQty;
+        renderFinalCart(); // Redesenha para atualizar os totais e subtotais
+        updateCartAndUI({ rerenderFinalList: false }); // Apenas atualiza o rodapé
+    }
+}
             if (e.target.matches('.modal-close-btn')) {
                 closeModal(e.target.closest('.fixed'));
             }
@@ -828,29 +835,31 @@
         });
         
         document.getElementById('service-config-container').addEventListener('input', (e) => {
-            const target = e.target;
-            if (!target.matches('.quantity-input')) return;
-            const id = target.dataset.id;
-            const newQty = parseInt(target.value, 10) || 0;
-            handleQuantityChange(id, newQty);
-            const subtotalEl = document.getElementById(`subtotal-${id}`);
-            if (subtotalEl) {
-                const service = findServiceById(id);
-                const subtotalValue = calculateItemSubtotal(service, newQty);
-                subtotalEl.innerHTML = subtotalValue > 0 ? `Subtotal: <span class="text-brand-white">${formatCurrency(subtotalValue)}</span>` : '';
-            }
-            updateCartAndUI();
-        });
-        
+    const target = e.target;
+    if (!target.matches('.quantity-input')) return;
+
+    const id = target.dataset.id;
+    const newQty = parseInt(target.value, 10) || 0;
+
+    handleQuantityChange(id, newQty); // Atualiza o carrinho e mostra toasts
+    updateSubtotalDisplay(id, newQty); // ATUALIZA O SUBTOTAL NO CARD
+    updateCartAndUI(); // Atualiza o rodapé com o total geral
+});
+
         document.getElementById('final-cart-items').addEventListener('input', (e) => {
-            const target = e.target;
-            if (!target.matches('.quantity-input-final')) return;
-            const id = target.dataset.id;
-            const newQty = parseInt(target.value, 10) || 0;
-            if (newQty === 0) delete cart[id];
-            else cart[id] = newQty;
-            updateCartAndUI();
-        });
+    const target = e.target;
+    if (!target.matches('.quantity-input-final')) return;
+
+    const id = target.dataset.id;
+    const newQty = parseInt(target.value, 10) || 0;
+
+    handleQuantityChange(id, newQty); // Cuida do carrinho e dos toasts
+
+    // Atualiza a UI sem redesenhar a lista inteira
+    renderFinalCart(); // Redesenha para atualizar totais e subtotais
+    updateCartAndUI({ rerenderFinalList: false }); // Apenas atualiza o rodapé
+});
+
 
         const investmentInput = document.getElementById('investment-input');
         investmentInput.addEventListener('input', (e) => {
