@@ -7,7 +7,8 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+    <!-- máscara de input -->
+    <script src="https://unpkg.com/imask"></script>
     <!-- Google Fonts: Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1016,5 +1017,19 @@ document.getElementById('restore-no-btn').addEventListener('click', () => {
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Seleciona o campo de telefone pelo ID
+        const phoneInput = document.getElementById('phone');
+        
+        // Define as opções da máscara para o formato de celular brasileiro
+        const maskOptions = {
+            mask: '(00) 00000-0000'
+        };
+
+        // Aplica a máscara ao campo
+        const phoneMask = IMask(phoneInput, maskOptions);
+    });
+</script>
 </body>
 </ht
