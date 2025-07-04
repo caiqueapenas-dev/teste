@@ -46,7 +46,7 @@
             background-color: #0a192f;
             color: #ccd6f6;
             font-family: 'Poppins', sans-serif;
-            padding-bottom: 120px; /* Espaço para o rodapé fixo */
+            padding-bottom: 120px;
         }
         .step-view {
             animation: stepFadeIn 0.6s ease-out forwards;
@@ -67,16 +67,42 @@
         }
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
-          -webkit-appearance: none; 
-          margin: 0; 
+            -webkit-appearance: none; 
+            margin: 0; 
         }
         input[type=number] {
-          -webkit-appearance: textfield;
-          -moz-appearance: textfield;
-          appearance: textfield;
+            -webkit-appearance: textfield;
+            -moz-appearance: textfield;
+            appearance: textfield;
         }
         .investment-segment {
             transition: background-color 0.3s ease-in-out;
+        }
+        .toast {
+            animation: toast-in 0.5s ease forwards;
+        }
+        .toast.fading-out {
+            animation: toast-out 0.5s ease forwards;
+        }
+        @keyframes toast-in {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes toast-out {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -237,38 +263,55 @@
             </div>
         </div>
     </div>
-
-
+    <div id="details-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
+        <div class="modal-content bg-brand-card rounded-lg p-8 max-w-md w-full relative modal-enter">
+            <button class="modal-close-btn absolute top-4 right-4 text-brand-text-dark hover:text-brand-white text-3xl leading-none">&times;</button>
+            <h3 id="details-modal-title" class="text-2xl font-bold text-brand-white mb-4"></h3>
+            <p class="text-brand-text-dark mb-4">Confira os entregáveis deste serviço:</p>
+            <ul id="details-modal-list" class="space-y-2">
+                <!-- Itens da lista serão injetados aqui -->
+            </ul>
+        </div>
+    </div>
+    <div id="loading-overlay" class="fixed inset-0 bg-brand-bg/80 backdrop-blur-sm flex-col flex items-center justify-center hidden z-[999]">
+        <div class="flex flex-col items-center text-center">
+            <svg class="animate-spin h-10 w-10 text-brand-bright-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="text-brand-text-light font-semibold mt-4 text-lg">Alterando para o Plano Recorrente...</p>
+        </div>
+    </div>
+    <div id="toast-container" class="fixed top-5 right-5 z-[1000] space-y-2"></div>
+    
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         // --- ESTADO DA APLICAÇÃO E DADOS ---
-        // SUBSTITUA TODA A VARIÁVEL 'services' POR ESTA:
-// SUBSTITUA TODA A SUA VARIÁVEL 'services' POR ESTA:
-const services = [
-    { category: 'Social Media', description: 'Crie conexões com sua audiência e fortaleça sua marca com um gerenciamento estratégico e consistente.', items: [
-        { id: 'sm_publicacao', name: 'Publicação Automática', price: 449.10, type: 'checkbox', billing: 'monthly', description: 'Agendamento e publicação dos posts no seu perfil.', unit: '', deliverables: ['Publicação de 3 posts por semana', 'Relatório de desempenho mensal', 'Suporte via WhatsApp'] },
-        { id: 'sm_configuracao', name: 'Otimização do Perfil', price: 299.40, type: 'checkbox', billing: 'once', description: 'Ajuste completo de bio, destaques, links e segurança.', unit: '', deliverables: ['Análise completa do perfil atual', 'Criação de 5 destaques estratégicos', 'Configuração de segurança (2FA)'] },
-        { id: 'sm_engajamento', name: 'Engajamento com Audiência', price: 748.50, type: 'checkbox', billing: 'monthly', description: 'Resposta a comentários e interações dos seguidores.', unit: '', deliverables: ['Respostas a todos os comentários em até 24h', 'Interação com 10 perfis estratégicos por dia', 'Não inclui resposta a DMs'] }
-    ]},
-    { category: 'Criação de Artes Gráficas', description: 'Capture a atenção com um design que fala pelo seu negócio e diferencia sua marca no mercado.', items: [
-        { id: 'card_carrossel', name: 'Carrossel', price: 80, type: 'quantity', billing: 'once', description: 'Criação de arte para post em formato carrossel com até 10 slides.', unit: '/unidade', deliverables: ['Design de até 10 slides', 'Uso de identidade visual da marca', 'Entrega em formato PNG/JPG'] },
-        { id: 'card_feed', name: 'Post para Feed', price: 40, type: 'quantity', billing: 'once', description: 'Criação de arte para post de imagem única no feed.', unit: '/unidade', deliverables: ['Design de imagem única (1080x1080)', 'Uso de identidade visual da marca', 'Entrega em formato PNG/JPG'] },
-        { id: 'card_story', name: 'Post para Story', price: 40, type: 'quantity', billing: 'once', description: 'Criação de arte para stories, ideal para avisos e comunicados.', unit: '/unidade', deliverables: ['Design de imagem única (1080x1920)', 'Uso de identidade visual da marca', 'Entrega em formato PNG/JPG'] }
-    ]},
-    { category: 'Edição de Vídeo', description: 'Converta vídeos brutos em histórias que engajam e prendem a atenção do início ao fim.', items: [
-        { id: 'video_30s', name: 'Vídeo até 30s', price: 60, type: 'quantity', billing: 'once', description: 'Edição completa com legendas, música e efeitos.', unit: '/unidade', deliverables: ['Cortes e transições dinâmicas', 'Legendas animadas', 'Trilha sonora livre de direitos autorais'] },
-        { id: 'video_60s', name: 'Vídeo até 60s', price: 100, type: 'quantity', billing: 'once', description: 'Edição completa com legendas, música e efeitos.', unit: '/unidade', deliverables: ['Tudo do plano anterior', 'Tratamento de cor e luz básico', 'Melhoria de áudio'] },
-        { id: 'video_3min', name: 'Vídeo até 3min', price: 280, type: 'quantity', billing: 'once', description: 'Edição completa com legendas, música e efeitos.', unit: '/unidade', deliverables: ['Tudo do plano anterior', 'Animações gráficas simples', 'Introdução e finalização (intro/outro)'] },
-        { id: 'video_15min', name: 'Vídeo até 15min', price: 400, type: 'quantity', billing: 'once', description: 'Edição completa com legendas, música e efeitos.', unit: '/unidade', deliverables: ['Tudo do plano anterior', 'Múltiplos ângulos de câmera (se fornecido)', 'Qualidade de exportação máxima'] }
-    ]},
-    { category: 'Tráfego Pago', description: 'Alcance as pessoas certas no momento certo com campanhas otimizadas para gerar leads e vendas.', items: [
-        { id: 'trafego_gestao', name: 'Gestão de Tráfego', price: 997, type: 'fixed', billing: 'monthly', description: 'Serviço completo de gestão de anúncios, estratégia e otimização.', unit: '/mês', deliverables: ['Criação e gestão de campanhas', 'Otimização diária de anúncios', 'Relatório de resultados quinzenal', 'Reunião estratégica mensal'] }
-    ]},
-    { category: 'Google Meu Negócio', description: 'Seja a primeira opção para clientes na sua região e domine as buscas locais.', items: [
-        { id: 'gmn_setup', name: 'Setup Inicial', price: 997, type: 'fixed', billing: 'once', description: 'Criação, configuração e otimização completa do seu perfil.', unit: '', deliverables: ['Criação e verificação do perfil', 'Otimização de SEO local', 'Cadastro de 10 produtos/serviços iniciais'] },
-        { id: 'gmn_mensal', name: 'Manutenção Mensal', price: 349, type: 'fixed', billing: 'monthly', description: 'Gerenciamento contínuo do seu perfil, postagens e avaliações.', unit: '/mês', deliverables: ['4 postagens mensais', 'Resposta a todas as avaliações', 'Atualização de horário e informações'] }
-    ]}
-];
+        const services = [
+            { category: 'Social Media', description: 'Crie conexões com sua audiência e fortaleça sua marca com um gerenciamento estratégico e consistente.', items: [
+                { id: 'sm_publicacao', name: 'Publicação Automática', price: 449.10, type: 'checkbox', billing: 'monthly', description: 'Agendamento e publicação dos posts no seu perfil.', unit: '', deliverables: ['Publicação de 3 posts por semana', 'Relatório de desempenho mensal', 'Suporte via WhatsApp'] },
+                { id: 'sm_configuracao', name: 'Otimização do Perfil', price: 299.40, type: 'checkbox', billing: 'once', description: 'Ajuste completo de bio, destaques, links e segurança.', unit: '', deliverables: ['Análise completa do perfil atual', 'Criação de 5 destaques estratégicos', 'Configuração de segurança (2FA)'] },
+                { id: 'sm_engajamento', name: 'Engajamento com Audiência', price: 748.50, type: 'checkbox', billing: 'monthly', description: 'Resposta a comentários e interações dos seguidores.', unit: '', deliverables: ['Respostas a todos os comentários em até 24h', 'Interação com 10 perfis estratégicos por dia', 'Não inclui resposta a DMs'] }
+            ]},
+            { category: 'Criação de Artes Gráficas', description: 'Capture a atenção com um design que fala pelo seu negócio e diferencia sua marca no mercado.', items: [
+                { id: 'card_carrossel', name: 'Carrossel', price: 80, type: 'quantity', billing: 'once', description: 'Criação de arte para post em formato carrossel com até 10 slides.', unit: '/unidade', deliverables: ['Design de até 10 slides', 'Uso de identidade visual da marca', 'Entrega em formato PNG/JPG'] },
+                { id: 'card_feed', name: 'Post para Feed', price: 40, type: 'quantity', billing: 'once', description: 'Criação de arte para post de imagem única no feed.', unit: '/unidade', deliverables: ['Design de imagem única (1080x1080)', 'Uso de identidade visual da marca', 'Entrega em formato PNG/JPG'] },
+                { id: 'card_story', name: 'Post para Story', price: 40, type: 'quantity', billing: 'once', description: 'Criação de arte para stories, ideal para avisos e comunicados.', unit: '/unidade', deliverables: ['Design de imagem única (1080x1920)', 'Uso de identidade visual da marca', 'Entrega em formato PNG/JPG'] }
+            ]},
+            { category: 'Edição de Vídeo', description: 'Converta vídeos brutos em histórias que engajam e prendem a atenção do início ao fim.', items: [
+                { id: 'video_30s', name: 'Vídeo até 30s', price: 60, type: 'quantity', billing: 'once', description: 'Edição completa com legendas, música e efeitos.', unit: '/unidade', deliverables: ['Cortes e transições dinâmicas', 'Legendas animadas', 'Trilha sonora livre de direitos autorais'] },
+                { id: 'video_60s', name: 'Vídeo até 60s', price: 100, type: 'quantity', billing: 'once', description: 'Edição completa com legendas, música e efeitos.', unit: '/unidade', deliverables: ['Tudo do plano anterior', 'Tratamento de cor e luz básico', 'Melhoria de áudio'] },
+                { id: 'video_3min', name: 'Vídeo até 3min', price: 280, type: 'quantity', billing: 'once', description: 'Edição completa com legendas, música e efeitos.', unit: '/unidade', deliverables: ['Tudo do plano anterior', 'Animações gráficas simples', 'Introdução e finalização (intro/outro)'] },
+                { id: 'video_15min', name: 'Vídeo até 15min', price: 400, type: 'quantity', billing: 'once', description: 'Edição completa com legendas, música e efeitos.', unit: '/unidade', deliverables: ['Tudo do plano anterior', 'Múltiplos ângulos de câmera (se fornecido)', 'Qualidade de exportação máxima'] }
+            ]},
+            { category: 'Tráfego Pago', description: 'Alcance as pessoas certas no momento certo com campanhas otimizadas para gerar leads e vendas.', items: [
+                { id: 'trafego_gestao', name: 'Gestão de Tráfego', price: 997, type: 'fixed', billing: 'monthly', description: 'Serviço completo de gestão de anúncios, estratégia e otimização.', unit: '/mês', deliverables: ['Criação e gestão de campanhas', 'Otimização diária de anúncios', 'Relatório de resultados quinzenal', 'Reunião estratégica mensal'] }
+            ]},
+            { category: 'Google Meu Negócio', description: 'Seja a primeira opção para clientes na sua região e domine as buscas locais.', items: [
+                { id: 'gmn_setup', name: 'Setup Inicial', price: 997, type: 'fixed', billing: 'once', description: 'Criação, configuração e otimização completa do seu perfil.', unit: '', deliverables: ['Criação e verificação do perfil', 'Otimização de SEO local', 'Cadastro de 10 produtos/serviços iniciais'] },
+                { id: 'gmn_mensal', name: 'Manutenção Mensal', price: 349, type: 'fixed', billing: 'monthly', description: 'Gerenciamento contínuo do seu perfil, postagens e avaliações.', unit: '/mês', deliverables: ['4 postagens mensais', 'Resposta a todas as avaliações', 'Atualização de horário e informações'] }
+            ]}
+        ];
         
         let cart = {}; 
         let serviceType = '';
@@ -281,6 +324,52 @@ const services = [
         const budgetFooter = document.getElementById('budget-footer');
 
         // --- FUNÇÕES UTILITÁRIAS ---
+        const showToast = (message, type = 'success') => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const baseClasses = 'toast text-white font-semibold py-2 px-4 rounded-lg shadow-lg';
+            const typeClasses = {
+                success: 'bg-brand-green',
+                info: 'bg-brand-dark-blue',
+                error: 'bg-red-500'
+            };
+            toast.className = `${baseClasses} ${typeClasses[type] || typeClasses.info}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('fading-out');
+                toast.addEventListener('animationend', () => toast.remove());
+            }, 3000);
+        };
+
+        const handleQuantityChange = (id, newQty) => {
+            const currentQty = cart[id] || 0;
+            if (currentQty === 0 && newQty === 1) {
+                showToast('Serviço adicionado!');
+            } else if (currentQty === 1 && newQty === 0) {
+                showToast('Serviço removido.', 'info');
+            }
+            const currentDiscount = calculateProgressiveDiscount(currentQty);
+            const newDiscount = calculateProgressiveDiscount(newQty);
+            if (newDiscount > 0 && newDiscount > currentDiscount) {
+                showToast(`Desconto de ${(newDiscount * 100).toFixed(0)}% ativado!`, 'success');
+            }
+            if (newQty === 0) {
+                delete cart[id];
+            } else {
+                cart[id] = newQty;
+            }
+        };
+
+        const updateSubtotalDisplay = (itemId, newQty) => {
+    const subtotalEl = document.getElementById(`subtotal-${itemId}`);
+    if (subtotalEl) {
+        const service = findServiceById(itemId);
+        const subtotalValue = calculateItemSubtotal(service, newQty);
+        subtotalEl.innerHTML = subtotalValue > 0 ? `Subtotal: <span class="text-brand-white">${formatCurrency(subtotalValue)}</span>` : '';
+    }
+};
+
         const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
         const calculateProgressiveDiscount = (quantity) => {
             if (quantity <= 1) return 0;
@@ -297,42 +386,35 @@ const services = [
             return itemTotal;
         };
 
-        // --- FUNÇÃO CENTRAL DE CÁLCULO ---
         const calculateTotals = () => {
             let initialTotal = 0;
             let monthlyTotal = 0;
-
             Object.entries(cart).forEach(([id, value]) => {
                 if (value === 0) return;
                 let itemTotal;
                 let isMonthly;
-
                 if (id === 'trafego_investimento_custom') {
                     itemTotal = value;
                     isMonthly = serviceType === 'recorrente';
                 } else {
-                    const service = findServiceById(id); 
-                    if (!service) return;
-                    itemTotal = calculateItemSubtotal(service, value);
-                    isMonthly = serviceType === 'recorrente' && service.billing === 'monthly';
-                }
-
+    const service = findServiceById(id); 
+    if (!service) return;
+    itemTotal = calculateItemSubtotal(service, value);
+    // LÓGICA CORRIGIDA: Itens de quantidade também são mensais no plano recorrente
+    isMonthly = serviceType === 'recorrente' && (service.billing === 'monthly' || service.type === 'quantity');
+}
                 if (isMonthly) {
                     monthlyTotal += itemTotal;
                 } else {
                     initialTotal += itemTotal;
                 }
             });
-
             const originalFirstMonthPayment = initialTotal + monthlyTotal;
             let discountAmount = 0;
-            
             if (discountState.applied) {
                 discountAmount = originalFirstMonthPayment * 0.5;
             }
-            
             const finalFirstMonthPayment = originalFirstMonthPayment - discountAmount;
-
             return {
                 initialTotal,
                 monthlyTotal,
@@ -343,12 +425,10 @@ const services = [
             };
         };
 
-        // --- FUNÇÕES DE RENDERIZAÇÃO ---
         const navigateToStep = (stepIndex) => {
             allStepViews.forEach(view => view.classList.add('hidden'));
             const targetStep = document.getElementById(`step-${stepIndex}`);
             if (targetStep) targetStep.classList.remove('hidden');
-            
             if (stepIndex >= 3) {
                 budgetFooter.classList.remove('hidden');
             } else {
@@ -358,7 +438,6 @@ const services = [
 
         const updateCartAndUI = () => {
             const totals = calculateTotals();
-            
             document.getElementById('view-budget-btn').disabled = totals.cartIsEmpty;
             const summaryContainer = document.getElementById('summary-totals');
             if (discountState.applied) {
@@ -375,7 +454,6 @@ const services = [
                         ${serviceType === 'recorrente' && totals.monthlyTotal > 0 ? `<div><span class="text-brand-text-dark text-sm">Mensalidade: </span><span class="font-semibold text-brand-white text-lg">${formatCurrency(totals.monthlyTotal)}</span></div>` : ''}
                     </div>`;
             }
-
             if (!document.getElementById('step-5').classList.contains('hidden')) {
                 renderFinalCart();
             }
@@ -386,21 +464,17 @@ const services = [
             const totalsContainer = document.getElementById('final-cart-totals');
             const finalizeBtn = document.getElementById('finalize-final-btn');
             itemsContainer.innerHTML = '';
-
             const totals = calculateTotals();
-
             if (totals.cartIsEmpty) {
                 itemsContainer.innerHTML = '<p class="text-brand-text-dark text-center py-8">Seu orçamento está vazio.</p>';
                 totalsContainer.innerHTML = '';
                 finalizeBtn.disabled = true;
                 return;
             }
-            
             finalizeBtn.disabled = false;
             Object.entries(cart).sort((a,b) => a[0].localeCompare(b[0])).forEach(([id, value]) => {
                 if (value === 0) return;
                 let service, quantity, itemTotal, discountInfo = '';
-                
                 if (id === 'trafego_investimento_custom') {
                     service = { name: 'Investimento em Anúncios', unit: '/mês' }; 
                     itemTotal = value;
@@ -413,10 +487,8 @@ const services = [
                         if (discount > 0) discountInfo = `<span class="text-xs text-brand-lime font-semibold ml-2">(${(discount * 100).toFixed(0)}% OFF)</span>`;
                     }
                 }
-                
                 const cartItemEl = document.createElement('div');
                 cartItemEl.className = 'flex justify-between items-center bg-brand-bg/50 p-3 rounded-md';
-                
                 let controls;
                 if (service.type === 'quantity') {
                     controls = `<div class="flex items-center gap-2">
@@ -427,7 +499,6 @@ const services = [
                 } else {
                      controls = `<button data-id="${id}" class="remove-item-btn text-red-400/70 hover:text-red-400 text-xl px-2">&times;</button>`;
                 }
-
                 cartItemEl.innerHTML = `
                     <div class="flex-grow">
                         <p class="font-bold text-brand-white">${service.name}</p>
@@ -437,7 +508,6 @@ const services = [
                 `;
                 itemsContainer.appendChild(cartItemEl);
             });
-
             if (discountState.applied) {
                 const discountTerms = serviceType === 'recorrente' ? 'Desconto de 50% aplicado no valor total do primeiro mês.' : 'Desconto de 50% aplicado no valor total.';
                 totalsContainer.innerHTML = `
@@ -459,14 +529,11 @@ const services = [
         const renderCategorySelection = () => {
             const grid = document.getElementById('category-selection-grid');
             grid.innerHTML = '';
-            
             services.forEach(cat => {
                 const isAvailable = (serviceType === 'avulso') ? cat.items.some(item => item.billing === 'once') : true;
                 const isSelected = selectedCategories.includes(cat.category);
-                
                 const card = document.createElement('div');
                 card.className = `relative bg-brand-card p-6 rounded-lg border-2 transition-all duration-300`;
-                
                 if (isAvailable) {
                     card.classList.add('cursor-pointer', 'hover:border-brand-bright-blue');
                     card.classList.add(isSelected ? 'border-brand-bright-blue' : 'border-transparent');
@@ -481,11 +548,12 @@ const services = [
                         document.getElementById('continue-from-categories-btn').disabled = selectedCategories.length === 0;
                     });
                 } else {
-                    
                     card.innerHTML = `
-                        <h3 class="text-xl font-bold text-brand-white">${cat.category}</h3>
-                        <p class="text-brand-text-dark mt-2">${cat.description}</p>
-                        <div class="absolute inset-0 bg-brand-bg/70 flex flex-col items-center justify-center rounded-lg p-4 text-center backdrop-blur-sm" style="backdrop-filter: blur(1.4px);">
+                        <div class="opacity-40">
+                            <h3 class="text-xl font-bold text-brand-white">${cat.category}</h3>
+                            <p class="text-brand-text-dark mt-2">${cat.description}</p>
+                        </div>
+                        <div class="absolute inset-0 bg-brand-bg/70 flex flex-col items-center justify-center rounded-lg p-4 text-center backdrop-blur-sm" style="backdrop-filter: blur(2px);">
                             <svg class="w-6 h-6 text-brand-bright-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                             <p class="text-sm font-semibold text-brand-text-light mt-2">Disponível no Plano Recorrente</p>
                             <button class="switch-to-recurring-btn mt-3 bg-brand-bright-blue text-white text-xs font-bold py-1 px-3 rounded-md hover:opacity-90">Mudar para Recorrente</button>
@@ -501,20 +569,15 @@ const services = [
             const categoryName = selectedCategories[index];
             const category = services.find(s => s.category === categoryName);
             const container = document.getElementById('service-config-container');
-            
             document.getElementById('config-title').textContent = `Personalize: ${categoryName}`;
             document.getElementById('config-progress').textContent = `Passo ${index + 1} de ${selectedCategories.length}`;
-            
             container.innerHTML = '';
-            
             const itemsGrid = document.createElement('div');
             itemsGrid.className = 'grid md:grid-cols-2 lg:grid-cols-3 gap-6 bg-brand-card p-6 rounded-lg';
-            
             category.items.forEach(item => {
                 const isItemAvailable = (serviceType === 'avulso') ? item.billing === 'once' : true;
                 const itemEl = document.createElement('div');
                 itemEl.className = 'relative bg-brand-bg p-6 rounded-lg flex flex-col justify-between transition-opacity duration-300';
-
                 if (isItemAvailable) {
                     let itemControls = '';
                     if (item.type === 'fixed' || item.type === 'checkbox') {
@@ -526,27 +589,33 @@ const services = [
                         const qty = cart[item.id] || 0;
                         itemControls = `<div><div class="mt-4 flex items-center justify-between gap-2"><p class="text-sm text-brand-text-dark">Quantidade:</p><div class="flex items-center gap-2"><button data-id="${item.id}" data-action="decrease" class="quantity-change-btn bg-brand-dark-blue/50 text-brand-text-light font-bold w-8 h-8 rounded-full hover:bg-brand-dark-blue">-</button><input type="number" value="${qty}" data-id="${item.id}" class="quantity-input w-12 text-center bg-transparent font-bold text-lg text-brand-white"><button data-id="${item.id}" data-action="increase" class="quantity-change-btn bg-brand-dark-blue/50 text-brand-text-light font-bold w-8 h-8 rounded-full hover:bg-brand-dark-blue">+</button></div></div><div id="subtotal-${item.id}" class="text-right text-brand-text-dark text-sm mt-2 h-5"></div></div>`;
                     }
-                    itemEl.innerHTML = `
-        <div>
-            <div class="flex justify-between items-start">
-                <h4 class="font-bold text-lg text-brand-white pr-2">${item.name}</h4>
-                <button data-details-id="${item.id}" class="details-btn text-brand-text-dark hover:text-brand-bright-blue transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.546-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                </button>
-            </div>
-            <p class="text-brand-text-dark mt-1 text-sm">${item.description || ''}</p>
-            <p class="text-brand-bright-blue font-semibold mt-2">${formatCurrency(item.price)} ${item.unit || ''}</p>
-        </div>
-        <div>${itemControls}</div>`;
-                } else {
                     
+                    let discountHint = '';
+                    if (item.type === 'quantity') {
+                        discountHint = `<p class="text-xs text-center text-brand-lime mt-2 font-semibold">🎁 Quanto mais unidades, maior o desconto!</p>`;
+                    }
+
                     itemEl.innerHTML = `
                         <div>
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-lg text-brand-white pr-2">${item.name}</h4>
+                                <button data-details-id="${item.id}" class="details-btn text-brand-text-dark hover:text-brand-bright-blue transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.546-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </button>
+                            </div>
+                            <p class="text-brand-text-dark mt-1 text-sm">${item.description || ''}</p>
+                            ${discountHint}
+                            <p class="text-brand-bright-blue font-semibold mt-2">${formatCurrency(item.price)} ${item.unit || ''}</p>
+                        </div>
+                        <div>${itemControls}</div>`;
+                } else {
+                    itemEl.innerHTML = `
+                        <div class="opacity-40">
                             <h4 class="font-bold text-lg text-brand-white pr-2">${item.name}</h4>
                             <p class="text-brand-text-dark mt-1 text-sm">${item.description || ''}</p>
                             <p class="text-brand-bright-blue font-semibold mt-2">${formatCurrency(item.price)} ${item.unit || ''}</p>
                         </div>
-                        <div class="absolute inset-0 bg-brand-card/50 flex flex-col items-center justify-center rounded-lg p-2 text-center backdrop-blur-sm" style="backdrop-filter: blur(1.4px);">
+                        <div class="absolute inset-0 bg-brand-card/50 flex flex-col items-center justify-center rounded-lg p-2 text-center backdrop-blur-sm" style="backdrop-filter: blur(2px);">
                             <svg class="w-8 h-8 text-brand-bright-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                             <button class="switch-to-recurring-btn mt-2 bg-brand-bright-blue text-white text-xs font-bold py-1 px-3 rounded-md hover:opacity-90">Mudar para Recorrente</button>
                         </div>
@@ -554,14 +623,11 @@ const services = [
                 }
                 itemsGrid.appendChild(itemEl);
             });
-            
             container.appendChild(itemsGrid);
-           // document.getElementById('prev-config-btn').style.visibility = index > 0 ? 'visible' : 'hidden';
             const nextBtn = document.getElementById('next-config-btn');
             nextBtn.textContent = index === selectedCategories.length - 1 ? 'Ver Orçamento Final' : 'Próximo';
         };
 
-        // --- MODAIS E TIMERS ---
         const updateInvestmentFeedback = (amount) => {
             const segments = document.querySelectorAll('.investment-segment');
             const feedbackEl = document.getElementById('investment-feedback');
@@ -569,13 +635,10 @@ const services = [
                 red: '#ef4444', orange: '#f97316', yellow: '#eab308',
                 green: '#22c55e', blue: '#3b82f6', transparent: 'transparent'
             };
-
             segments.forEach(seg => seg.style.backgroundColor = colors.transparent);
             feedbackEl.textContent = '';
             feedbackEl.style.color = colors.transparent;
-
             if (amount <= 0) return;
-
             if (amount <= 200) {
                 segments[0].style.backgroundColor = colors.red;
                 feedbackEl.textContent = 'Valor muito baixo, pode não ter resultados.';
@@ -641,14 +704,12 @@ const services = [
             }, 1000);
         };
 
-        // --- EVENT LISTENERS ---
         document.body.addEventListener('click', (e) => {
             if (e.target.matches('.navigate-btn')) {
                 const targetStep = e.target.dataset.stepTarget;
                 navigateToStep(targetStep);
                 if (targetStep === '5') renderFinalCart();
             }
-
             if (e.target.closest('.service-type-btn')) {
                 serviceType = e.target.closest('.service-type-btn').dataset.type;
                 cart = {};
@@ -657,13 +718,44 @@ const services = [
                 renderCategorySelection();
                 navigateToStep(3);
             }
-
+            if (e.target.closest('.details-btn')) {
+                const detailsId = e.target.closest('.details-btn').dataset.detailsId;
+                const service = findServiceById(detailsId);
+                if (service && service.deliverables) {
+                    document.getElementById('details-modal-title').textContent = service.name;
+                    const listEl = document.getElementById('details-modal-list');
+                    listEl.innerHTML = '';
+                    service.deliverables.forEach(deliverable => {
+                        const li = document.createElement('li');
+                        li.className = 'flex items-start';
+                        li.innerHTML = `
+                            <svg class="w-5 h-5 text-brand-lime mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            <span class="text-brand-text-light">${deliverable}</span>
+                        `;
+                        listEl.appendChild(li);
+                    });
+                    openModal(document.getElementById('details-modal'));
+                }
+            }
+            if (e.target.matches('.switch-to-recurring-btn')) {
+                const loadingOverlay = document.getElementById('loading-overlay');
+                loadingOverlay.classList.remove('hidden');
+                setTimeout(() => {
+                    serviceType = 'recorrente';
+                    const currentStep = document.querySelector('.step-view:not(.hidden)').id.split('-')[1];
+                    if (currentStep === '3') {
+                        renderCategorySelection();
+                    } else if (currentStep === '4') {
+                        renderServiceConfiguration(currentConfigIndex);
+                    }
+                    loadingOverlay.classList.add('hidden');
+                }, 2000);
+            }
             if (e.target.id === 'continue-from-categories-btn' && selectedCategories.length > 0) {
                 currentConfigIndex = 0;
                 renderServiceConfiguration(currentConfigIndex);
                 navigateToStep(4);
             }
-
             if (e.target.id === 'prev-config-btn') {
                 if (currentConfigIndex > 0) {
                     currentConfigIndex--;
@@ -681,7 +773,6 @@ const services = [
                     renderFinalCart();
                 }
             }
-
             const configTarget = e.target.closest('[data-id]');
             if (e.target.closest('#service-config-container') && configTarget) {
                 const id = configTarget.dataset.id;
@@ -690,33 +781,25 @@ const services = [
                         openModal(document.getElementById('investment-modal'));
                     } else {
                         cart[id] = 1;
+                        showToast('Serviço adicionado!');
                         renderServiceConfiguration(currentConfigIndex);
                     }
                 } else if (configTarget.matches('.remove-item-btn')) {
                     if (id === 'trafego_gestao') delete cart['trafego_investimento_custom'];
                     delete cart[id];
+                    showToast('Serviço removido.', 'info');
                     renderServiceConfiguration(currentConfigIndex);
                 } else if (configTarget.matches('.quantity-change-btn')) {
-                    const currentQty = cart[id] || 0;
-                    const action = configTarget.dataset.action;
-                    const newQty = action === 'increase' ? currentQty + 1 : Math.max(0, currentQty - 1);
+    const action = configTarget.dataset.action;
+    const input = configTarget.parentElement.querySelector('.quantity-input');
+    const newQty = action === 'increase' ? (parseInt(input.value) || 0) + 1 : Math.max(0, (parseInt(input.value) || 0) - 1);
 
-                    if (newQty === 0) delete cart[id];
-                    else cart[id] = newQty;
-                    
-                    const input = configTarget.parentElement.querySelector('.quantity-input');
-                    if (input) input.value = newQty;
-                    
-                    const subtotalEl = configTarget.closest('.bg-brand-bg').querySelector(`#subtotal-${id}`);
-                    if(subtotalEl) {
-                        const service = findServiceById(id);
-                        const subtotalValue = calculateItemSubtotal(service, newQty);
-                        subtotalEl.innerHTML = subtotalValue > 0 ? `Subtotal: <span class="text-brand-white">${formatCurrency(subtotalValue)}</span>` : '';
-                    }
-                }
-                updateCartAndUI();
-            }
-            
+    input.value = newQty; // Atualiza o valor visual do input
+
+    handleQuantityChange(id, newQty); // Atualiza o carrinho e mostra toasts
+    updateSubtotalDisplay(id, newQty); // ATUALIZA O SUBTOTAL NO CARD
+    updateCartAndUI(); // Atualiza o rodapé com o total geral
+}}
             const finalCartTarget = e.target.closest('[data-id]');
             if (e.target.closest('#final-cart-items') && finalCartTarget) {
                 const id = finalCartTarget.dataset.id;
@@ -732,7 +815,6 @@ const services = [
                 }
                 updateCartAndUI();
             }
-
             if (e.target.matches('.modal-close-btn')) {
                 closeModal(e.target.closest('.fixed'));
             }
@@ -749,14 +831,11 @@ const services = [
             const target = e.target;
             if (!target.matches('.quantity-input')) return;
             const id = target.dataset.id;
-            const service = findServiceById(id);
             const newQty = parseInt(target.value, 10) || 0;
-            
-            if (newQty === 0) delete cart[id];
-            else cart[id] = newQty;
-
+            handleQuantityChange(id, newQty);
             const subtotalEl = document.getElementById(`subtotal-${id}`);
             if (subtotalEl) {
+                const service = findServiceById(id);
                 const subtotalValue = calculateItemSubtotal(service, newQty);
                 subtotalEl.innerHTML = subtotalValue > 0 ? `Subtotal: <span class="text-brand-white">${formatCurrency(subtotalValue)}</span>` : '';
             }
@@ -778,7 +857,6 @@ const services = [
             let value = e.target.value.replace(/\D/g, '');
             const numericValue = Number(value) / 100;
             updateInvestmentFeedback(numericValue);
-            
             if (value) {
                 value = numericValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             }
@@ -793,7 +871,7 @@ const services = [
                 renderServiceConfiguration(currentConfigIndex);
                 updateCartAndUI();
                 closeModal(document.getElementById('investment-modal'));
-                investmentInput.value = '';
+                showToast('Serviço de Tráfego Adicionado!');
             }
         });
 
@@ -812,6 +890,7 @@ const services = [
             document.getElementById('cancel-order-btn').disabled = true;
             updateCartAndUI();
             closeModal(document.getElementById('discount-modal'));
+            showToast('Desconto de 50% aplicado!');
         });
         document.getElementById('reject-discount-btn').addEventListener('click', () => {
             location.reload();
@@ -826,7 +905,6 @@ const services = [
             message += `Instagram: ${userData.instagram || 'Não informado'}\n`;
             message += `Área de Atuação: ${userData.field || 'Não informado'}\n\n`;
             message += `*SERVIÇOS SOLICITADOS (${serviceType === 'recorrente' ? 'Plano Recorrente' : 'Serviço Avulso'}):*\n`;
-
             Object.entries(cart).sort((a,b) => a[0].localeCompare(b[0])).forEach(([id, value]) => {
                 let service, itemTotal, name;
                 if (id === 'trafego_investimento_custom') {
@@ -840,7 +918,6 @@ const services = [
                 }
                 message += `- ${name}: ${formatCurrency(itemTotal)}\n`;
             });
-
             const totals = calculateTotals();
             message += `\n*RESUMO DO ORÇAMENTO:*\n`;
             if (discountState.applied) {
@@ -853,11 +930,9 @@ const services = [
             } else {
                 message += `*Pagamento Inicial:* ${formatCurrency(totals.originalFirstMonthPayment)}\n`;
             }
-            
             if (serviceType === 'recorrente' && totals.monthlyTotal > 0) {
                 message += `*Mensalidade (a partir do 2º mês):* ${formatCurrency(totals.monthlyTotal)}`;
             }
-
             const whatsappUrl = `https://wa.me/5575981865878?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
         });
@@ -867,23 +942,5 @@ const services = [
         updateCartAndUI();
     });
     </script>
-    <div id="loading-overlay" class="fixed inset-0 bg-brand-bg/80 backdrop-blur-sm flex-col flex items-center justify-center hidden z-[999]">
-    <div class="flex flex-col items-center text-center">
-        <svg class="animate-spin h-10 w-10 text-brand-bright-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        <p class="text-brand-text-light font-semibold mt-4 text-lg">Alterando para o Plano Recorrente...</p>
-    </div>
-</div>
-<div id="details-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
-    <div class="modal-content bg-brand-card rounded-lg p-8 max-w-md w-full relative modal-enter">
-        <button class="modal-close-btn absolute top-4 right-4 text-brand-text-dark hover:text-brand-white text-3xl leading-none">&times;</button>
-        <h3 id="details-modal-title" class="text-2xl font-bold text-brand-white mb-4"></h3>
-        <p class="text-brand-text-dark mb-4">Confira os entregáveis deste serviço:</p>
-        <ul id="details-modal-list" class="space-y-2">
-            </ul>
-    </div>
-</div>
 </body>
-</html>
+</ht
