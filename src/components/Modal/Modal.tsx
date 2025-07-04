@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 
 interface ModalProps {
@@ -23,7 +24,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, className = ''
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
       <div className={`bg-slate-800 rounded-lg p-8 relative animate-in zoom-in-95 duration-300 ${className}`}>
         <button
@@ -34,7 +35,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, className = ''
         </button>
         {children}
       </div>
-    </div>
+    </div>,
+    document.getElementById('modal-root')!
   );
 };
 

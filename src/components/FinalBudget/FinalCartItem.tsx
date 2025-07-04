@@ -96,6 +96,11 @@ const FinalCartItem: React.FC<FinalCartItemProps> = ({
             </span>
           )}
         </p>
+        {serviceType === 'recorrente' && service.type === 'quantity' && (
+          <p className="text-xs text-blue-300 mt-1">
+            (Equivale a ~{(quantity / 4).toFixed(1).replace('.0', '')} posts/semana)
+          </p>
+        )}
       </div>
       {renderControls()}
     </div>

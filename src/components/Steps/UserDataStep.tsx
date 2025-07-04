@@ -23,14 +23,20 @@ const UserDataStep: React.FC<UserDataStepProps> = ({
     onUserDataChange(updatedData);
   };
 
-  const handlePhoneChange = (value: string) => {
-    // Simple phone mask (00) 00000-0000
-    let phone = value.replace(/\D/g, '');
-    if (phone.length <= 11) {
-      phone = phone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-      phone = phone.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
-      phone = phone.replace(/(\d{2})(\d{0,5})/, '($1) $2');
-      handleInputChange('phone', phone);
+const handlePhoneChange = (value: string) => {
+    // Remove todos os caracteres não numéricos e limita a 11 dígitos.
+    const onlyDigits = value.replace(/\D/g, '').slice(0, 11);
+    const { length } = onlyDigits;
+
+    if (length >= 11) {
+      // Formata para celular com 11 dígitos: (XX) XXXXX-XXXX
+      const masked = onlyDigits.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+      handleInputChange('phone', masked);
+    } else {
+      // Formata para telefone com 10 dígitos ou menos (enquanto digita): (XX) XXXX-XXXX
+      let masked = onlyDigits.replace(/(\d{2})(\d*)/, '($1) $2');
+      masked = masked.replace(/( \d{4})(\d*)/, '$1-$2');
+      handleInputChange('phone', masked);
     }
   };
 

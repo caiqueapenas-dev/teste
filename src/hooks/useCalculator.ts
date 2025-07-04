@@ -140,7 +140,7 @@ export const useCalculator = () => {
     localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData));
   }, [cart, serviceType, userData, selectedCategories, discountState.applied]);
 
-  const loadSession = (): boolean => {
+  const loadSession = useCallback((): boolean => {
     const savedSession = localStorage.getItem(SESSION_KEY);
     if (savedSession) {
       try {
@@ -157,7 +157,7 @@ export const useCalculator = () => {
       }
     }
     return false;
-  };
+  }, []);
 
   // Auto-save session when data changes
   useEffect(() => {

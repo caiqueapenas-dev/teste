@@ -3,6 +3,7 @@ import { ArrowLeft, Download, MessageCircle, X } from 'lucide-react';
 import { Cart, UserData, Totals } from '../../types';
 import FinalCartItem from './FinalCartItem';
 import DiscountModal from '../Modals/DiscountModal';
+import { services } from '../../data/services'; 
 
 interface FinalBudgetStepProps {
   cart: Cart;
@@ -300,7 +301,32 @@ const FinalBudgetStep: React.FC<FinalBudgetStepProps> = ({
             </div>
           )}
         </div>
+ {/* ADICIONADO: Resumo de Conteúdo Semanal */}
+        {(() => {
+          const totalPosts = Object.entries(cart).reduce((total, [id, quantity]) => {
+            const serviceInfo = services
+              .flatMap(cat => cat.items.map(item => ({...item, categoryName: cat.category})))
+              .find(item => item.id === id);
 
+            if (serviceInfo && serviceInfo.type === 'quantity' && (serviceInfo.categoryName === 'Criação de Artes Gráficas' || serviceInfo.categoryName === 'Edição de Vídeo')) {
+              return total + quantity;
+            }
+            return total;
+          }, 0);
+
+          if (serviceType === 'recorrente' && totalPosts > 0) {
+            const averageWeekly = (totalPosts / 4).toFixed(1).replace('.0', '');
+            return (
+              <div className="my-6 text-center bg-slate-900/50 p-4 rounded-lg border border-blue-500/30">
+                <h4 className="text-lg font-bold text-blue-300 mb-1">Resumo de Conteúdo Contratado</h4>
+                <p className="text-white text-xl">
+                  Total de <span className="font-bold">{averageWeekly} posts</span> por semana, em média.
+                </p>
+              </div>
+            );
+          }
+          return null;
+        })()}
         {/* Totals */}
         <div className="border-t-2 border-slate-600 pt-6 space-y-3">
           {discountApplied ? (

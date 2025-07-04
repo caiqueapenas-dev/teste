@@ -15,7 +15,13 @@ function App() {
   const [currentStep, setCurrentStep] = useState(0);
   const [currentConfigIndex, setCurrentConfigIndex] = useState(0);
   const [showSessionRestore, setShowSessionRestore] = useState(false);
-  
+  // ADICIONE ESTE CÓDIGO
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  }, [currentStep, currentConfigIndex]);
   const {
     cart,
     serviceType,

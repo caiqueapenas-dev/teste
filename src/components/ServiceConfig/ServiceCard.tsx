@@ -67,6 +67,11 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
               Subtotal: <span className="text-white font-semibold">{formatCurrency(subtotal)}</span>
             </div>
           )}
+          {serviceType === 'recorrente' && service.type === 'quantity' && quantity > 0 && (
+            <div className="text-center mt-3 text-sm text-blue-300 bg-blue-500/10 p-2 rounded-md">
+              Isso equivale a <strong>{ (quantity / 4).toFixed(1).replace('.0', '') } posts</strong> por semana, em média.
+            </div>
+          )}
         </div>
       );
     }
