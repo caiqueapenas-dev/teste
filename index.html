@@ -472,73 +472,104 @@
 
         };
 
-        const renderFinalCart = () => {
-            const itemsContainer = document.getElementById('final-cart-items');
-            const totalsContainer = document.getElementById('final-cart-totals');
-            const finalizeBtn = document.getElementById('finalize-final-btn');
-            itemsContainer.innerHTML = '';
-            const totals = calculateTotals();
-            if (totals.cartIsEmpty) {
-                itemsContainer.innerHTML = '<p class="text-brand-text-dark text-center py-8">Seu orçamento está vazio.</p>';
-                totalsContainer.innerHTML = '';
-                finalizeBtn.disabled = true;
-                return;
-            }
-            finalizeBtn.disabled = false;
-            Object.entries(cart).sort((a,b) => a[0].localeCompare(b[0])).forEach(([id, value]) => {
-                if (value === 0) return;
-                let service, quantity, itemTotal, discountInfo = '';
-                if (id === 'trafego_investimento_custom') {
-                    service = { name: 'Investimento em Anúncios', unit: '/mês' }; 
-                    itemTotal = value;
-                } else {
-                    service = findServiceById(id); 
-                    itemTotal = calculateItemSubtotal(service, value);
-                    if (service.type === 'quantity') {
-                        quantity = value;
-                        const discount = calculateProgressiveDiscount(quantity);
-                        if (discount > 0) discountInfo = `<span class="text-xs text-brand-lime font-semibold ml-2">(${(discount * 100).toFixed(0)}% OFF)</span>`;
-                    }
-                }
-                const cartItemEl = document.createElement('div');
-                cartItemEl.className = 'flex justify-between items-center bg-brand-bg/50 p-3 rounded-md';
-                let controls;
-                if (service.type === 'quantity') {
-                    controls = `<div class="flex items-center gap-2">
-                        <button data-id="${id}" data-action="decrease" class="quantity-change-final-btn bg-brand-dark-blue/50 text-brand-text-light font-bold w-7 h-7 rounded-full hover:bg-brand-dark-blue">-</button>
-                        <input type="number" value="${quantity}" data-id="${id}" class="quantity-input-final w-12 text-center bg-transparent font-bold text-md text-brand-white">
-                        <button data-id="${id}" data-action="increase" class="quantity-change-final-btn bg-brand-dark-blue/50 text-brand-text-light font-bold w-7 h-7 rounded-full hover:bg-brand-dark-blue">+</button>
-                    </div>`;
-                } else {
-                     controls = `<button data-id="${id}" class="remove-item-btn text-red-400/70 hover:text-red-400 text-xl px-2">&times;</button>`;
-                }
-                cartItemEl.innerHTML = `
-                    <div class="flex-grow">
-                        <p class="font-bold text-brand-white">${service.name}</p>
-                        <p class="text-sm text-brand-text-dark">${formatCurrency(itemTotal)} ${service.unit || ''}${discountInfo}</p>
-                    </div>
-                    ${controls}
-                `;
-                itemsContainer.appendChild(cartItemEl);
-            });
-            if (discountState.applied) {
-                const discountTerms = serviceType === 'recorrente' ? 'Desconto de 50% aplicado no valor total do primeiro mês.' : 'Desconto de 50% aplicado no valor total.';
-                totalsContainer.innerHTML = `
-                    <div class="text-center text-brand-lime text-sm mb-2">${discountTerms}</div>
-                    <div class="flex justify-between items-center text-md"><span class="font-semibold text-brand-text-light">Subtotal:</span><span class="font-semibold text-brand-white">${formatCurrency(totals.originalFirstMonthPayment)}</span></div>
-                    <div class="flex justify-between items-center text-md"><span class="font-semibold text-brand-lime">Desconto (50%):</span><span class="font-semibold text-brand-lime">-${formatCurrency(totals.discountAmount)}</span></div>
-                    <div class="border-t border-brand-dark-blue/50 my-2"></div>
-                    <div class="flex justify-between items-center text-lg"><span class="font-bold text-brand-text-light">Total a Pagar:</span><span class="font-bold text-brand-bright-blue">${formatCurrency(totals.finalFirstMonthPayment)}</span></div>
-                    ${serviceType === 'recorrente' && totals.monthlyTotal > 0 ? `<div class="flex justify-between items-center text-md mt-1"><span class="font-semibold text-brand-text-light">Mensalidade (a partir do 2º mês):</span><span class="font-bold text-brand-white">${formatCurrency(totals.monthlyTotal)}</span></div>` : ''}
-                `;
-            } else {
-                totalsContainer.innerHTML = `
-                    <div class="flex justify-between items-center text-lg"><span class="font-semibold text-brand-text-light">Valor Inicial a Pagar:</span><span class="font-bold text-brand-bright-blue">${formatCurrency(totals.originalFirstMonthPayment)}</span></div>
-                     ${serviceType === 'recorrente' && totals.monthlyTotal > 0 ? `<div class="flex justify-between items-center text-md"><span class="font-semibold text-brand-text-light">Cobrança Mensal Recorrente:</span><span class="font-bold text-brand-white">${formatCurrency(totals.monthlyTotal)}</span></div>` : ''}
-                `;
-            }
-        };
+        // SUBSTITUA TODA A SUA FUNÇÃO renderFinalCart POR ESTA:
+const renderFinalCart = () => {
+    const itemsContainer = document.getElementById('final-cart-items');
+    const totalsContainer = document.getElementById('final-cart-totals');
+    const finalizeBtn = document.getElementById('finalize-final-btn');
+    itemsContainer.innerHTML = ''; // Limpa a lista anterior
+
+    const totals = calculateTotals();
+
+    if (totals.cartIsEmpty) {
+        itemsContainer.innerHTML = '<p class="text-brand-text-dark text-center py-8">Seu orçamento está vazio.</p>';
+        totalsContainer.innerHTML = '';
+        finalizeBtn.disabled = true;
+        return;
+    }
+    
+    finalizeBtn.disabled = false;
+
+    // --- NOVA LÓGICA DE SEPARAÇÃO ---
+    const oneTimeItems = [];
+    const recurringItems = [];
+
+    Object.entries(cart).sort((a,b) => a[0].localeCompare(b[0])).forEach(([id, value]) => {
+        if (value === 0) return;
+        let service, quantity, itemTotal, discountInfo = '', isMonthly;
         
+        if (id === 'trafego_investimento_custom') {
+            service = { name: 'Investimento em Anúncios', unit: '/mês', type: 'fixed' }; 
+            itemTotal = value;
+            isMonthly = serviceType === 'recorrente';
+        } else {
+            service = findServiceById(id); 
+            quantity = value;
+            itemTotal = calculateItemSubtotal(service, quantity);
+            isMonthly = serviceType === 'recorrente' && (service.billing === 'monthly' || service.type === 'quantity');
+            if (service.type === 'quantity') {
+                const discount = calculateProgressiveDiscount(quantity);
+                if (discount > 0) discountInfo = `<span class="text-xs text-brand-lime font-semibold ml-2">(${(discount * 100).toFixed(0)}% OFF)</span>`;
+            }
+        }
+        
+        let controls;
+        if (service.type === 'quantity') {
+            controls = `<div class="flex items-center gap-2">
+                <button data-id="${id}" data-action="decrease" class="quantity-change-final-btn bg-brand-dark-blue/50 text-brand-text-light font-bold w-7 h-7 rounded-full hover:bg-brand-dark-blue">-</button>
+                <input type="number" value="${quantity}" data-id="${id}" class="quantity-input-final w-12 text-center bg-transparent font-bold text-md text-brand-white">
+                <button data-id="${id}" data-action="increase" class="quantity-change-final-btn bg-brand-dark-blue/50 text-brand-text-light font-bold w-7 h-7 rounded-full hover:bg-brand-dark-blue">+</button>
+            </div>`;
+        } else {
+             controls = `<button data-id="${id}" class="remove-item-btn text-red-400/70 hover:text-red-400 text-xl px-2">&times;</button>`;
+        }
+
+        const itemHTML = `
+            <div class="flex justify-between items-center bg-brand-bg/50 p-3 rounded-md">
+                <div class="flex-grow">
+                    <p class="font-bold text-brand-white">${service.name}</p>
+                    <p class="text-sm text-brand-text-dark">${formatCurrency(itemTotal)} ${isMonthly ? '/mês' : ''}${discountInfo}</p>
+                </div>
+                ${controls}
+            </div>
+        `;
+
+        if (isMonthly) {
+            recurringItems.push(itemHTML);
+        } else {
+            oneTimeItems.push(itemHTML);
+        }
+    });
+
+    // --- NOVA LÓGICA DE RENDERIZAÇÃO ---
+    if (oneTimeItems.length > 0) {
+        itemsContainer.innerHTML += `<h4 class="text-lg font-bold text-brand-light-blue border-b border-brand-dark-blue/50 pb-2 mb-3">Custos de Setup (Pagamento Único)</h4>`;
+        oneTimeItems.forEach(itemHTML => itemsContainer.innerHTML += itemHTML);
+    }
+
+    if (recurringItems.length > 0) {
+        itemsContainer.innerHTML += `<h4 class="text-lg font-bold text-brand-light-blue border-b border-brand-dark-blue/50 pb-2 mb-3 mt-6">Custos Mensais Recorrentes</h4>`;
+        recurringItems.forEach(itemHTML => itemsContainer.innerHTML += itemHTML);
+    }
+    
+    // Renderiza os totais (lógica inalterada)
+    if (discountState.applied) {
+        const discountTerms = serviceType === 'recorrente' ? 'Desconto de 50% aplicado no valor total do primeiro mês.' : 'Desconto de 50% aplicado no valor total.';
+        totalsContainer.innerHTML = `
+            <div class="text-center text-brand-lime text-sm mb-2">${discountTerms}</div>
+            <div class="flex justify-between items-center text-md"><span class="font-semibold text-brand-text-light">Subtotal:</span><span class="font-semibold text-brand-white">${formatCurrency(totals.originalFirstMonthPayment)}</span></div>
+            <div class="flex justify-between items-center text-md"><span class="font-semibold text-brand-lime">Desconto (50%):</span><span class="font-semibold text-brand-lime">-${formatCurrency(totals.discountAmount)}</span></div>
+            <div class="border-t border-brand-dark-blue/50 my-2"></div>
+            <div class="flex justify-between items-center text-lg"><span class="font-bold text-brand-text-light">Total a Pagar:</span><span class="font-bold text-brand-bright-blue">${formatCurrency(totals.finalFirstMonthPayment)}</span></div>
+            ${serviceType === 'recorrente' && totals.monthlyTotal > 0 ? `<div class="flex justify-between items-center text-md mt-1"><span class="font-semibold text-brand-text-light">Mensalidade (a partir do 2º mês):</span><span class="font-bold text-brand-white">${formatCurrency(totals.monthlyTotal)}</span></div>` : ''}
+        `;
+    } else {
+        totalsContainer.innerHTML = `
+            <div class="flex justify-between items-center text-lg"><span class="font-semibold text-brand-text-light">Valor Inicial a Pagar:</span><span class="font-bold text-brand-bright-blue">${formatCurrency(totals.originalFirstMonthPayment)}</span></div>
+             ${serviceType === 'recorrente' && totals.monthlyTotal > 0 ? `<div class="flex justify-between items-center text-md"><span class="font-semibold text-brand-text-light">Cobrança Mensal Recorrente:</span><span class="font-bold text-brand-white">${formatCurrency(totals.monthlyTotal)}</span></div>` : ''}
+        `;
+    }
+};
         const renderCategorySelection = () => {
             const grid = document.getElementById('category-selection-grid');
             grid.innerHTML = '';
