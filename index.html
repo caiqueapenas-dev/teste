@@ -104,6 +104,15 @@
                 opacity: 0;
             }
         }
+        .quantity-change-btn:active {
+    transform: scale(0.9);
+    background-color: #0496ff; /* Cor 'bright-blue' para feedback */
+}
+#category-selection-grid .service-type-btn:active,
+#category-selection-grid .bg-brand-card:active {
+    transform: scale(0.98);
+    transition: transform 0.1s;
+}
     </style>
 </head>
 <body>
@@ -587,7 +596,7 @@
                         itemControls = isAdded ? addedControls : addBtn;
                     } else if (item.type === 'quantity') {
                         const qty = cart[item.id] || 0;
-                        itemControls = `<div><div class="mt-4 flex items-center justify-between gap-2"><p class="text-sm text-brand-text-dark">Quantidade:</p><div class="flex items-center gap-2"><button data-id="${item.id}" data-action="decrease" class="quantity-change-btn bg-brand-dark-blue/50 text-brand-text-light font-bold w-8 h-8 rounded-full hover:bg-brand-dark-blue">-</button><input type="number" value="${qty}" data-id="${item.id}" class="quantity-input w-12 text-center bg-transparent font-bold text-lg text-brand-white"><button data-id="${item.id}" data-action="increase" class="quantity-change-btn bg-brand-dark-blue/50 text-brand-text-light font-bold w-8 h-8 rounded-full hover:bg-brand-dark-blue">+</button></div></div><div id="subtotal-${item.id}" class="text-right text-brand-text-dark text-sm mt-2 h-5"></div></div>`;
+                        itemControls = `<div><div class="mt-4 flex items-center justify-between gap-2"><p class="text-sm text-brand-text-dark">Quantidade:</p><div class="flex items-center gap-2"><button data-id="${item.id}" data-action="decrease" class="quantity-change-btn bg-brand-dark-blue/50 text-brand-text-light font-bold w-8 h-8 rounded-full hover:bg-brand-dark-blue transition-all duration-150">-</button><input type="number" value="${qty}" data-id="${item.id}" class="quantity-input w-12 text-center bg-transparent font-bold text-lg text-brand-white"><button data-id="${item.id}" data-action="increase" class="quantity-change-btn bg-brand-dark-blue/50 text-brand-text-light font-bold w-8 h-8 rounded-full hover:bg-brand-dark-blue transition-all duration-150">+</button></div></div><div id="subtotal-${item.id}" class="text-right text-brand-text-dark text-sm mt-2 h-5"></div></div>`;
                     }
                     
                     let discountHint = '';
