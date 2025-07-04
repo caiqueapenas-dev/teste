@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Marketing Digital - by Carlos Henrique</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Configuração de Estilos e Cores -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        'brand': {
+                            'dark-blue': '#022b3a',
+                            'bright-blue': '#0496ff',
+                            'light-blue': '#bfdbf7',
+                            'off-white': '#e1e5f2',
+                            'white': '#ffffff',
+                            'green': '#679436',
+                            'lime': '#a5be00',
+                            'bg': '#0a192f',
+                            'card': '#172a45',
+                            'text-light': '#ccd6f6',
+                            'text-dark': '#8892b0',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #0a192f;
+            color: #ccd6f6;
+            font-family: 'Poppins', sans-serif;
+            padding-bottom: 120px; /* Espaço para o rodapé fixo */
+        }
+        .step-view {
+            animation: stepFadeIn 0.6s ease-out forwards;
+        }
+        @keyframes stepFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-enter { animation: modalFadeIn 0.3s ease-out forwards; }
+        .modal-leave { animation: modalFadeOut 0.3s ease-in forwards; }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes modalFadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.95); }
+        }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+          -webkit-appearance: none; 
+          margin: 0; 
+        }
+        input[type=number] {
+          -webkit-appearance: textfield;
+          -moz-appearance: textfield;
+          appearance: textfield;
+        }
+        .investment-segment {
+            transition: background-color 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <main class="container mx-auto px-6 lg:px-10 py-10">
+        <!-- PASSO 0: BEM-VINDO -->
+        <div id="step-0" class="step-view text-center max-w-3xl mx-auto">
+            <h1 class="text-4xl lg:text-5xl font-bold text-brand-white">Chega de Orçamentos Demorados e sem Transparência.</h1>
+            <h2 class="text-xl lg:text-2xl font-light text-brand-text-dark mt-4">Monte seu plano de marketing digital em minutos e saiba exatamente quanto vai investir para alcançar seus objetivos.</h2>
+            <button data-step-target="1" class="navigate-btn mt-8 bg-brand-bright-blue text-brand-white font-bold py-3 px-10 rounded-lg shadow-lg hover:opacity-90 transition-opacity text-lg">
+                Montar meu Orçamento
+            </button>
+        </div>
+
+        <!-- PASSO 1: DADOS DO CLIENTE -->
+        <div id="step-1" class="step-view hidden max-w-xl mx-auto">
+            <h2 class="text-3xl font-bold text-brand-white mb-6">Primeiro, vamos nos conhecer.</h2>
+            <form id="user-form" class="space-y-4">
+                <div>
+                    <label for="name" class="sr-only">Seu nome completo</label>
+                    <input type="text" id="name" name="name" placeholder="Seu nome completo" required class="w-full bg-brand-card border border-brand-dark-blue/50 text-brand-text-light p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-bright-blue">
+                </div>
+                <div>
+                    <label for="email" class="sr-only">Seu melhor e-mail</label>
+                    <input type="email" id="email" name="email" placeholder="Seu melhor e-mail" required class="w-full bg-brand-card border border-brand-dark-blue/50 text-brand-text-light p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-bright-blue">
+                </div>
+                <div>
+                    <label for="phone" class="sr-only">Celular (com DDD)</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Celular (com DDD)" required class="w-full bg-brand-card border border-brand-dark-blue/50 text-brand-text-light p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-bright-blue">
+                </div>
+                <div>
+                    <label for="instagram" class="sr-only">Seu Instagram (@usuario)</label>
+                    <input type="text" id="instagram" name="instagram" placeholder="Seu Instagram (@usuario)" class="w-full bg-brand-card border border-brand-dark-blue/50 text-brand-text-light p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-bright-blue">
+                </div>
+                <div>
+                    <label for="field" class="sr-only">Sua área de atuação</label>
+                    <input type="text" id="field" name="field" placeholder="Sua área de atuação (Ex: Nutricionista)" required class="w-full bg-brand-card border border-brand-dark-blue/50 text-brand-text-light p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-bright-blue">
+                </div>
+                <div class="flex gap-4">
+                    <button type="button" data-step-target="0" class="navigate-btn w-1/3 bg-brand-dark-blue/80 text-brand-text-light font-semibold py-3 rounded-lg hover:bg-brand-dark-blue">Voltar</button>
+                    <button type="submit" class="w-2/3 bg-brand-green text-brand-white font-bold py-3 rounded-lg hover:bg-brand-lime transition-colors">Continuar</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- PASSO 2: TIPO DE SERVIÇO -->
+        <div id="step-2" class="step-view hidden">
+            <h2 class="text-3xl font-bold text-brand-white mb-6 text-center">Qual tipo de serviço você busca?</h2>
+            <div class="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                <button data-type="recorrente" class="service-type-btn bg-brand-card p-8 rounded-lg border-2 border-transparent text-left hover:border-brand-bright-blue transition-colors">
+                    <h3 class="text-xl font-bold text-brand-white">Serviço Recorrente</h3>
+                    <p class="text-brand-text-dark mt-2">Ideal para quem busca um plano de marketing contínuo, com acompanhamento e otimização mensal.</p>
+                </button>
+                <button data-type="avulso" class="service-type-btn bg-brand-card p-8 rounded-lg border-2 border-transparent text-left hover:border-brand-bright-blue transition-colors">
+                    <h3 class="text-xl font-bold text-brand-white">Serviço Avulso</h3>
+                    <p class="text-brand-text-dark mt-2">Perfeito para projetos pontuais, como a criação de artes, edição de vídeos ou a configuração inicial de uma ferramenta.</p>
+                </button>
+            </div>
+             <div class="text-center mt-8">
+                <button data-step-target="1" class="navigate-btn bg-brand-dark-blue/80 text-brand-text-light font-semibold py-2 px-8 rounded-lg hover:bg-brand-dark-blue">Voltar</button>
+            </div>
+        </div>
+
+        <!-- PASSO 3: SELEÇÃO DE CATEGORIAS -->
+        <div id="step-3" class="step-view hidden">
+            <h2 class="text-3xl font-bold text-brand-white mb-6 text-center">Quais serviços você está buscando?</h2>
+            <p class="text-brand-text-dark text-center mb-8">Selecione uma ou mais opções para personalizar seu plano.</p>
+            <div id="category-selection-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Categorias injetadas aqui -->
+            </div>
+            <div class="flex justify-center items-center gap-4 mt-8">
+                <button data-step-target="2" class="navigate-btn bg-brand-dark-blue/80 text-brand-text-light font-semibold py-2 px-8 rounded-lg hover:bg-brand-dark-blue">Voltar</button>
+                <button id="continue-from-categories-btn" class="bg-brand-green text-brand-white font-bold py-3 px-10 rounded-lg hover:bg-brand-lime transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled>Continuar</button>
+            </div>
+        </div>
+
+        <!-- PASSO 4: CONFIGURAÇÃO DOS SERVIÇOS -->
+        <div id="step-4" class="step-view hidden">
+            <div class="text-center mb-8">
+                <h2 id="config-title" class="text-3xl lg:text-4xl font-bold text-brand-white mb-2"></h2>
+                <p id="config-progress" class="text-brand-text-dark"></p>
+            </div>
+            <div id="service-config-container">
+                <!-- Configuração do serviço ativo injetada aqui -->
+            </div>
+            <div class="flex justify-between items-center mt-8">
+                <button id="prev-config-btn" class="bg-brand-dark-blue/80 text-brand-text-light font-semibold py-2 px-6 rounded-lg hover:bg-brand-dark-blue">Anterior</button>
+                <button id="next-config-btn" class="bg-brand-green text-brand-white font-bold py-3 px-10 rounded-lg hover:bg-brand-lime">Próximo</button>
+            </div>
+        </div>
+        
+        <!-- PASSO 5: ORÇAMENTO FINAL -->
+        <div id="step-5" class="step-view hidden">
+            <h2 class="text-3xl font-bold text-brand-white mb-8 text-center">Seu Orçamento Personalizado está Pronto!</h2>
+            <div class="bg-brand-card p-6 lg:p-8 rounded-lg max-w-3xl mx-auto">
+                <div id="final-cart-items" class="space-y-4 mb-6 min-h-[80px]"></div>
+                <div id="final-cart-totals" class="border-t-2 border-brand-dark-blue/50 pt-4 space-y-3"></div>
+                <button id="finalize-final-btn" class="mt-6 w-full bg-brand-green text-brand-white font-bold py-3 rounded-lg shadow-lg hover:bg-brand-lime transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed">
+                    Finalizar e Enviar no WhatsApp
+                </button>
+                <button data-step-target="4" id="back-to-config-btn" class="navigate-btn mt-4 w-full text-brand-text-dark font-semibold py-2 rounded-lg hover:bg-brand-dark-blue/50 transition-colors">
+                    &larr; Voltar e editar serviços
+                </button>
+                <button id="cancel-order-btn" class="mt-2 w-full text-sm text-red-400/70 hover:text-red-400 hover:bg-red-500/10 transition-colors py-2 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                    Cancelar Pedido
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- RODAPÉ FIXO COM RESUMO DO ORÇAMENTO -->
+    <footer id="budget-footer" class="fixed bottom-0 left-0 right-0 bg-brand-card/80 backdrop-blur-sm border-t border-brand-dark-blue/50 z-40 hidden">
+        <div class="container mx-auto p-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div id="summary-totals" class="flex-grow space-y-1 text-center sm:text-left">
+                <!-- Resumo dos totais injetado aqui -->
+            </div>
+            <button data-step-target="5" id="view-budget-btn" class="navigate-btn bg-brand-bright-blue text-brand-white font-bold py-2 px-6 rounded-lg shadow-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                Ver Orçamento Final
+            </button>
+        </div>
+    </footer>
+
+    <!-- MODAIS -->
+    <div id="investment-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
+        <div class="modal-content bg-brand-card rounded-lg p-8 max-w-md w-full relative modal-enter">
+            <button class="modal-close-btn absolute top-4 right-4 text-brand-text-dark hover:text-brand-white text-3xl leading-none">&times;</button>
+            <h3 class="text-2xl font-bold text-brand-white mb-4">Investimento em Anúncios</h3>
+            
+            <div class="mb-4">
+                <div id="investment-bar-container" class="flex w-full h-3 rounded-full bg-brand-bg overflow-hidden">
+                    <div class="investment-segment w-1/5"></div>
+                    <div class="investment-segment w-1/5"></div>
+                    <div class="investment-segment w-1/5"></div>
+                    <div class="investment-segment w-1/5"></div>
+                    <div class="investment-segment w-1/5"></div>
+                </div>
+                <p id="investment-feedback" class="text-center text-sm font-semibold h-5 mt-2 transition-colors duration-300"></p>
+            </div>
+
+            <div class="mb-4">
+                <label for="investment-input" class="block text-sm font-bold text-brand-text-light mb-2">Valor do Investimento (Mensal)</label>
+                <input type="text" id="investment-input" placeholder="R$ 1.000,00" class="w-full bg-brand-bg border border-brand-dark-blue text-brand-white text-2xl font-bold p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-bright-blue">
+            </div>
+            <button id="investment-confirm-btn" class="w-full bg-brand-bright-blue text-brand-white font-bold py-3 rounded-lg hover:bg-opacity-80 transition-opacity">Confirmar e Adicionar</button>
+        </div>
+    </div>
+    <div id="discount-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
+        <div class="modal-content bg-brand-card rounded-lg p-8 max-w-lg w-full relative modal-enter text-center">
+            <h3 class="text-2xl font-bold text-brand-lime mb-2">Espere! Uma oferta especial para você.</h3>
+            <p class="text-brand-text-light mb-4">Para que você possa conhecer meu trabalho, estou oferecendo <strong class="text-brand-white">50% de desconto</strong> no seu pedido.</p>
+            <p id="discount-terms" class="text-sm text-brand-text-dark bg-brand-bg/50 p-3 rounded-md mb-4"></p>
+            <div class="bg-red-500/20 text-red-300 font-bold text-lg p-3 rounded-lg mb-6">
+                Promoção expira em: <span id="countdown-timer">20:00</span>
+            </div>
+            <div class="flex gap-4">
+                <button id="accept-discount-btn" class="w-full bg-brand-lime text-brand-dark-blue font-bold py-3 rounded-lg hover:opacity-90 transition-opacity">Sim, eu quero o desconto!</button>
+                <button id="reject-discount-btn" class="w-full bg-brand-dark-blue/80 text-brand-text-light font-semibold py-3 rounded-lg hover:bg-brand-dark-blue">Não, obrigado. Cancelar.</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- ESTADO DA APLICAÇÃO E DADOS ---
+        // SUBSTITUA TODA A VARIÁVEL 'services' POR ESTA:
+// SUBSTITUA TODA A SUA VARIÁVEL 'services' POR ESTA:
+const services = [
+    { category: 'Social Media', description: 'Crie conexões com sua audiência e fortaleça sua marca com um gerenciamento estratégico e consistente.', items: [
+        { id: 'sm_publicacao', name: 'Publicação Automática', price: 449.10, type: 'checkbox', billing: 'monthly', description: 'Agendamento e publicação dos posts no seu perfil.', unit: '', deliverables: ['Publicação de 3 posts por semana', 'Relatório de desempenho mensal', 'Suporte via WhatsApp'] },
+        { id: 'sm_configuracao', name: 'Otimização do Perfil', price: 299.40, type: 'checkbox', billing: 'once', description: 'Ajuste completo de bio, destaques, links e segurança.', unit: '', deliverables: ['Análise completa do perfil atual', 'Criação de 5 destaques estratégicos', 'Configuração de segurança (2FA)'] },
+        { id: 'sm_engajamento', name: 'Engajamento com Audiência', price: 748.50, type: 'checkbox', billing: 'monthly', description: 'Resposta a comentários e interações dos seguidores.', unit: '', deliverables: ['Respostas a todos os comentários em até 24h', 'Interação com 10 perfis estratégicos por dia', 'Não inclui resposta a DMs'] }
+    ]},
+    { category: 'Criação de Artes Gráficas', description: 'Capture a atenção com um design que fala pelo seu negócio e diferencia sua marca no mercado.', items: [
+        { id: 'card_carrossel', name: 'Carrossel', price: 80, type: 'quantity', billing: 'once', description: 'Criação de arte para post em formato carrossel com até 10 slides.', unit: '/unidade', deliverables: ['Design de até 10 slides', 'Uso de identidade visual da marca', 'Entrega em formato PNG/JPG'] },
+        { id: 'card_feed', name: 'Post para Feed', price: 40, type: 'quantity', billing: 'once', description: 'Criação de arte para post de imagem única no feed.', unit: '/unidade', deliverables: ['Design de imagem única (1080x1080)', 'Uso de identidade visual da marca', 'Entrega em formato PNG/JPG'] },
+        { id: 'card_story', name: 'Post para Story', price: 40, type: 'quantity', billing: 'once', description: 'Criação de arte para stories, ideal para avisos e comunicados.', unit: '/unidade', deliverables: ['Design de imagem única (1080x1920)', 'Uso de identidade visual da marca', 'Entrega em formato PNG/JPG'] }
+    ]},
+    { category: 'Edição de Vídeo', description: 'Converta vídeos brutos em histórias que engajam e prendem a atenção do início ao fim.', items: [
+        { id: 'video_30s', name: 'Vídeo até 30s', price: 60, type: 'quantity', billing: 'once', description: 'Edição completa com legendas, música e efeitos.', unit: '/unidade', deliverables: ['Cortes e transições dinâmicas', 'Legendas animadas', 'Trilha sonora livre de direitos autorais'] },
+        { id: 'video_60s', name: 'Vídeo até 60s', price: 100, type: 'quantity', billing: 'once', description: 'Edição completa com legendas, música e efeitos.', unit: '/unidade', deliverables: ['Tudo do plano anterior', 'Tratamento de cor e luz básico', 'Melhoria de áudio'] },
+        { id: 'video_3min', name: 'Vídeo até 3min', price: 280, type: 'quantity', billing: 'once', description: 'Edição completa com legendas, música e efeitos.', unit: '/unidade', deliverables: ['Tudo do plano anterior', 'Animações gráficas simples', 'Introdução e finalização (intro/outro)'] },
+        { id: 'video_15min', name: 'Vídeo até 15min', price: 400, type: 'quantity', billing: 'once', description: 'Edição completa com legendas, música e efeitos.', unit: '/unidade', deliverables: ['Tudo do plano anterior', 'Múltiplos ângulos de câmera (se fornecido)', 'Qualidade de exportação máxima'] }
+    ]},
+    { category: 'Tráfego Pago', description: 'Alcance as pessoas certas no momento certo com campanhas otimizadas para gerar leads e vendas.', items: [
+        { id: 'trafego_gestao', name: 'Gestão de Tráfego', price: 997, type: 'fixed', billing: 'monthly', description: 'Serviço completo de gestão de anúncios, estratégia e otimização.', unit: '/mês', deliverables: ['Criação e gestão de campanhas', 'Otimização diária de anúncios', 'Relatório de resultados quinzenal', 'Reunião estratégica mensal'] }
+    ]},
+    { category: 'Google Meu Negócio', description: 'Seja a primeira opção para clientes na sua região e domine as buscas locais.', items: [
+        { id: 'gmn_setup', name: 'Setup Inicial', price: 997, type: 'fixed', billing: 'once', description: 'Criação, configuração e otimização completa do seu perfil.', unit: '', deliverables: ['Criação e verificação do perfil', 'Otimização de SEO local', 'Cadastro de 10 produtos/serviços iniciais'] },
+        { id: 'gmn_mensal', name: 'Manutenção Mensal', price: 349, type: 'fixed', billing: 'monthly', description: 'Gerenciamento contínuo do seu perfil, postagens e avaliações.', unit: '/mês', deliverables: ['4 postagens mensais', 'Resposta a todas as avaliações', 'Atualização de horário e informações'] }
+    ]}
+];
+        
+        let cart = {}; 
+        let serviceType = '';
+        let selectedCategories = [];
+        let currentConfigIndex = 0;
+        let discountState = { applied: false, timerId: null };
+        let userData = {};
+
+        const allStepViews = document.querySelectorAll('.step-view');
+        const budgetFooter = document.getElementById('budget-footer');
+
+        // --- FUNÇÕES UTILITÁRIAS ---
+        const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        const calculateProgressiveDiscount = (quantity) => {
+            if (quantity <= 1) return 0;
+            if (quantity >= 10) return 0.20;
+            return ((quantity - 1) / 9) * 0.20;
+        };
+        const findServiceById = (id) => services.flatMap(cat => cat.items).find(item => item.id === id);
+        const calculateItemSubtotal = (service, quantity) => {
+            if (!service || quantity === 0) return 0;
+            let itemTotal = service.price * quantity;
+            if (service.type === 'quantity') {
+                itemTotal *= (1 - calculateProgressiveDiscount(quantity));
+            }
+            return itemTotal;
+        };
+
+        // --- FUNÇÃO CENTRAL DE CÁLCULO ---
+        const calculateTotals = () => {
+            let initialTotal = 0;
+            let monthlyTotal = 0;
+
+            Object.entries(cart).forEach(([id, value]) => {
+                if (value === 0) return;
+                let itemTotal;
+                let isMonthly;
+
+                if (id === 'trafego_investimento_custom') {
+                    itemTotal = value;
+                    isMonthly = serviceType === 'recorrente';
+                } else {
+                    const service = findServiceById(id); 
+                    if (!service) return;
+                    itemTotal = calculateItemSubtotal(service, value);
+                    isMonthly = serviceType === 'recorrente' && service.billing === 'monthly';
+                }
+
+                if (isMonthly) {
+                    monthlyTotal += itemTotal;
+                } else {
+                    initialTotal += itemTotal;
+                }
+            });
+
+            const originalFirstMonthPayment = initialTotal + monthlyTotal;
+            let discountAmount = 0;
+            
+            if (discountState.applied) {
+                discountAmount = originalFirstMonthPayment * 0.5;
+            }
+            
+            const finalFirstMonthPayment = originalFirstMonthPayment - discountAmount;
+
+            return {
+                initialTotal,
+                monthlyTotal,
+                originalFirstMonthPayment,
+                discountAmount,
+                finalFirstMonthPayment,
+                cartIsEmpty: Object.keys(cart).length === 0
+            };
+        };
+
+        // --- FUNÇÕES DE RENDERIZAÇÃO ---
+        const navigateToStep = (stepIndex) => {
+            allStepViews.forEach(view => view.classList.add('hidden'));
+            const targetStep = document.getElementById(`step-${stepIndex}`);
+            if (targetStep) targetStep.classList.remove('hidden');
+            
+            if (stepIndex >= 3) {
+                budgetFooter.classList.remove('hidden');
+            } else {
+                budgetFooter.classList.add('hidden');
+            }
+        };
+
+        const updateCartAndUI = () => {
+            const totals = calculateTotals();
+            
+            document.getElementById('view-budget-btn').disabled = totals.cartIsEmpty;
+            const summaryContainer = document.getElementById('summary-totals');
+            if (discountState.applied) {
+                summaryContainer.innerHTML = `
+                    <div class="flex flex-wrap justify-center sm:justify-start gap-x-4 gap-y-1">
+                        <div><span class="text-brand-text-dark text-sm">Total: </span><span class="font-semibold text-brand-white text-lg line-through">${formatCurrency(totals.originalFirstMonthPayment)}</span></div>
+                        <div><span class="text-brand-lime text-sm">Desconto: </span><span class="font-semibold text-brand-lime text-lg">-${formatCurrency(totals.discountAmount)}</span></div>
+                        <div><span class="text-brand-text-dark text-sm">Novo Total: </span><span class="font-semibold text-brand-white text-lg">${formatCurrency(totals.finalFirstMonthPayment)}</span></div>
+                    </div>`;
+            } else {
+                 summaryContainer.innerHTML = `
+                    <div class="flex flex-wrap justify-center sm:justify-start gap-x-6 gap-y-1">
+                        <div><span class="text-brand-text-dark text-sm">Pagamento Inicial: </span><span class="font-semibold text-brand-white text-lg">${formatCurrency(totals.originalFirstMonthPayment)}</span></div>
+                        ${serviceType === 'recorrente' && totals.monthlyTotal > 0 ? `<div><span class="text-brand-text-dark text-sm">Mensalidade: </span><span class="font-semibold text-brand-white text-lg">${formatCurrency(totals.monthlyTotal)}</span></div>` : ''}
+                    </div>`;
+            }
+
+            if (!document.getElementById('step-5').classList.contains('hidden')) {
+                renderFinalCart();
+            }
+        };
+
+        const renderFinalCart = () => {
+            const itemsContainer = document.getElementById('final-cart-items');
+            const totalsContainer = document.getElementById('final-cart-totals');
+            const finalizeBtn = document.getElementById('finalize-final-btn');
+            itemsContainer.innerHTML = '';
+
+            const totals = calculateTotals();
+
+            if (totals.cartIsEmpty) {
+                itemsContainer.innerHTML = '<p class="text-brand-text-dark text-center py-8">Seu orçamento está vazio.</p>';
+                totalsContainer.innerHTML = '';
+                finalizeBtn.disabled = true;
+                return;
+            }
+            
+            finalizeBtn.disabled = false;
+            Object.entries(cart).sort((a,b) => a[0].localeCompare(b[0])).forEach(([id, value]) => {
+                if (value === 0) return;
+                let service, quantity, itemTotal, discountInfo = '';
+                
+                if (id === 'trafego_investimento_custom') {
+                    service = { name: 'Investimento em Anúncios', unit: '/mês' }; 
+                    itemTotal = value;
+                } else {
+                    service = findServiceById(id); 
+                    itemTotal = calculateItemSubtotal(service, value);
+                    if (service.type === 'quantity') {
+                        quantity = value;
+                        const discount = calculateProgressiveDiscount(quantity);
+                        if (discount > 0) discountInfo = `<span class="text-xs text-brand-lime font-semibold ml-2">(${(discount * 100).toFixed(0)}% OFF)</span>`;
+                    }
+                }
+                
+                const cartItemEl = document.createElement('div');
+                cartItemEl.className = 'flex justify-between items-center bg-brand-bg/50 p-3 rounded-md';
+                
+                let controls;
+                if (service.type === 'quantity') {
+                    controls = `<div class="flex items-center gap-2">
+                        <button data-id="${id}" data-action="decrease" class="quantity-change-final-btn bg-brand-dark-blue/50 text-brand-text-light font-bold w-7 h-7 rounded-full hover:bg-brand-dark-blue">-</button>
+                        <input type="number" value="${quantity}" data-id="${id}" class="quantity-input-final w-12 text-center bg-transparent font-bold text-md text-brand-white">
+                        <button data-id="${id}" data-action="increase" class="quantity-change-final-btn bg-brand-dark-blue/50 text-brand-text-light font-bold w-7 h-7 rounded-full hover:bg-brand-dark-blue">+</button>
+                    </div>`;
+                } else {
+                     controls = `<button data-id="${id}" class="remove-item-btn text-red-400/70 hover:text-red-400 text-xl px-2">&times;</button>`;
+                }
+
+                cartItemEl.innerHTML = `
+                    <div class="flex-grow">
+                        <p class="font-bold text-brand-white">${service.name}</p>
+                        <p class="text-sm text-brand-text-dark">${formatCurrency(itemTotal)} ${service.unit || ''}${discountInfo}</p>
+                    </div>
+                    ${controls}
+                `;
+                itemsContainer.appendChild(cartItemEl);
+            });
+
+            if (discountState.applied) {
+                const discountTerms = serviceType === 'recorrente' ? 'Desconto de 50% aplicado no valor total do primeiro mês.' : 'Desconto de 50% aplicado no valor total.';
+                totalsContainer.innerHTML = `
+                    <div class="text-center text-brand-lime text-sm mb-2">${discountTerms}</div>
+                    <div class="flex justify-between items-center text-md"><span class="font-semibold text-brand-text-light">Subtotal:</span><span class="font-semibold text-brand-white">${formatCurrency(totals.originalFirstMonthPayment)}</span></div>
+                    <div class="flex justify-between items-center text-md"><span class="font-semibold text-brand-lime">Desconto (50%):</span><span class="font-semibold text-brand-lime">-${formatCurrency(totals.discountAmount)}</span></div>
+                    <div class="border-t border-brand-dark-blue/50 my-2"></div>
+                    <div class="flex justify-between items-center text-lg"><span class="font-bold text-brand-text-light">Total a Pagar:</span><span class="font-bold text-brand-bright-blue">${formatCurrency(totals.finalFirstMonthPayment)}</span></div>
+                    ${serviceType === 'recorrente' && totals.monthlyTotal > 0 ? `<div class="flex justify-between items-center text-md mt-1"><span class="font-semibold text-brand-text-light">Mensalidade (a partir do 2º mês):</span><span class="font-bold text-brand-white">${formatCurrency(totals.monthlyTotal)}</span></div>` : ''}
+                `;
+            } else {
+                totalsContainer.innerHTML = `
+                    <div class="flex justify-between items-center text-lg"><span class="font-semibold text-brand-text-light">Valor Inicial a Pagar:</span><span class="font-bold text-brand-bright-blue">${formatCurrency(totals.originalFirstMonthPayment)}</span></div>
+                     ${serviceType === 'recorrente' && totals.monthlyTotal > 0 ? `<div class="flex justify-between items-center text-md"><span class="font-semibold text-brand-text-light">Cobrança Mensal Recorrente:</span><span class="font-bold text-brand-white">${formatCurrency(totals.monthlyTotal)}</span></div>` : ''}
+                `;
+            }
+        };
+        
+        const renderCategorySelection = () => {
+            const grid = document.getElementById('category-selection-grid');
+            grid.innerHTML = '';
+            
+            services.forEach(cat => {
+                const isAvailable = (serviceType === 'avulso') ? cat.items.some(item => item.billing === 'once') : true;
+                const isSelected = selectedCategories.includes(cat.category);
+                
+                const card = document.createElement('div');
+                card.className = `relative bg-brand-card p-6 rounded-lg border-2 transition-all duration-300`;
+                
+                if (isAvailable) {
+                    card.classList.add('cursor-pointer', 'hover:border-brand-bright-blue');
+                    card.classList.add(isSelected ? 'border-brand-bright-blue' : 'border-transparent');
+                    card.innerHTML = `<h3 class="text-xl font-bold text-brand-white">${cat.category}</h3><p class="text-brand-text-dark mt-2">${cat.description}</p>`;
+                    card.addEventListener('click', () => {
+                        card.classList.toggle('border-brand-bright-blue');
+                        if (selectedCategories.includes(cat.category)) {
+                            selectedCategories = selectedCategories.filter(c => c !== cat.category);
+                        } else {
+                            selectedCategories.push(cat.category);
+                        }
+                        document.getElementById('continue-from-categories-btn').disabled = selectedCategories.length === 0;
+                    });
+                } else {
+                    
+                    card.innerHTML = `
+                        <h3 class="text-xl font-bold text-brand-white">${cat.category}</h3>
+                        <p class="text-brand-text-dark mt-2">${cat.description}</p>
+                        <div class="absolute inset-0 bg-brand-bg/70 flex flex-col items-center justify-center rounded-lg p-4 text-center backdrop-blur-sm" style="backdrop-filter: blur(1.4px);">
+                            <svg class="w-6 h-6 text-brand-bright-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            <p class="text-sm font-semibold text-brand-text-light mt-2">Disponível no Plano Recorrente</p>
+                            <button class="switch-to-recurring-btn mt-3 bg-brand-bright-blue text-white text-xs font-bold py-1 px-3 rounded-md hover:opacity-90">Mudar para Recorrente</button>
+                        </div>
+                    `;
+                }
+                grid.appendChild(card);
+            });
+            document.getElementById('continue-from-categories-btn').disabled = selectedCategories.length === 0;
+        };
+
+        const renderServiceConfiguration = (index) => {
+            const categoryName = selectedCategories[index];
+            const category = services.find(s => s.category === categoryName);
+            const container = document.getElementById('service-config-container');
+            
+            document.getElementById('config-title').textContent = `Personalize: ${categoryName}`;
+            document.getElementById('config-progress').textContent = `Passo ${index + 1} de ${selectedCategories.length}`;
+            
+            container.innerHTML = '';
+            
+            const itemsGrid = document.createElement('div');
+            itemsGrid.className = 'grid md:grid-cols-2 lg:grid-cols-3 gap-6 bg-brand-card p-6 rounded-lg';
+            
+            category.items.forEach(item => {
+                const isItemAvailable = (serviceType === 'avulso') ? item.billing === 'once' : true;
+                const itemEl = document.createElement('div');
+                itemEl.className = 'relative bg-brand-bg p-6 rounded-lg flex flex-col justify-between transition-opacity duration-300';
+
+                if (isItemAvailable) {
+                    let itemControls = '';
+                    if (item.type === 'fixed' || item.type === 'checkbox') {
+                        const isAdded = cart[item.id];
+                        const addedControls = `<div class="flex items-center justify-center gap-4 mt-4"><span class="text-brand-lime font-semibold flex items-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Adicionado</span><button data-id="${item.id}" class="remove-item-btn text-red-400/70 hover:text-red-400 text-2xl p-1">&times;</button></div>`;
+                        const addBtn = `<button data-id="${item.id}" class="add-btn mt-4 w-full bg-brand-green/80 text-white font-semibold py-2 px-4 rounded-lg hover:bg-brand-green transition-colors">Adicionar</button>`;
+                        itemControls = isAdded ? addedControls : addBtn;
+                    } else if (item.type === 'quantity') {
+                        const qty = cart[item.id] || 0;
+                        itemControls = `<div><div class="mt-4 flex items-center justify-between gap-2"><p class="text-sm text-brand-text-dark">Quantidade:</p><div class="flex items-center gap-2"><button data-id="${item.id}" data-action="decrease" class="quantity-change-btn bg-brand-dark-blue/50 text-brand-text-light font-bold w-8 h-8 rounded-full hover:bg-brand-dark-blue">-</button><input type="number" value="${qty}" data-id="${item.id}" class="quantity-input w-12 text-center bg-transparent font-bold text-lg text-brand-white"><button data-id="${item.id}" data-action="increase" class="quantity-change-btn bg-brand-dark-blue/50 text-brand-text-light font-bold w-8 h-8 rounded-full hover:bg-brand-dark-blue">+</button></div></div><div id="subtotal-${item.id}" class="text-right text-brand-text-dark text-sm mt-2 h-5"></div></div>`;
+                    }
+                    itemEl.innerHTML = `
+        <div>
+            <div class="flex justify-between items-start">
+                <h4 class="font-bold text-lg text-brand-white pr-2">${item.name}</h4>
+                <button data-details-id="${item.id}" class="details-btn text-brand-text-dark hover:text-brand-bright-blue transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.546-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </button>
+            </div>
+            <p class="text-brand-text-dark mt-1 text-sm">${item.description || ''}</p>
+            <p class="text-brand-bright-blue font-semibold mt-2">${formatCurrency(item.price)} ${item.unit || ''}</p>
+        </div>
+        <div>${itemControls}</div>`;
+                } else {
+                    
+                    itemEl.innerHTML = `
+                        <div>
+                            <h4 class="font-bold text-lg text-brand-white pr-2">${item.name}</h4>
+                            <p class="text-brand-text-dark mt-1 text-sm">${item.description || ''}</p>
+                            <p class="text-brand-bright-blue font-semibold mt-2">${formatCurrency(item.price)} ${item.unit || ''}</p>
+                        </div>
+                        <div class="absolute inset-0 bg-brand-card/50 flex flex-col items-center justify-center rounded-lg p-2 text-center backdrop-blur-sm" style="backdrop-filter: blur(1.4px);">
+                            <svg class="w-8 h-8 text-brand-bright-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                            <button class="switch-to-recurring-btn mt-2 bg-brand-bright-blue text-white text-xs font-bold py-1 px-3 rounded-md hover:opacity-90">Mudar para Recorrente</button>
+                        </div>
+                    `;
+                }
+                itemsGrid.appendChild(itemEl);
+            });
+            
+            container.appendChild(itemsGrid);
+           // document.getElementById('prev-config-btn').style.visibility = index > 0 ? 'visible' : 'hidden';
+            const nextBtn = document.getElementById('next-config-btn');
+            nextBtn.textContent = index === selectedCategories.length - 1 ? 'Ver Orçamento Final' : 'Próximo';
+        };
+
+        // --- MODAIS E TIMERS ---
+        const updateInvestmentFeedback = (amount) => {
+            const segments = document.querySelectorAll('.investment-segment');
+            const feedbackEl = document.getElementById('investment-feedback');
+            const colors = {
+                red: '#ef4444', orange: '#f97316', yellow: '#eab308',
+                green: '#22c55e', blue: '#3b82f6', transparent: 'transparent'
+            };
+
+            segments.forEach(seg => seg.style.backgroundColor = colors.transparent);
+            feedbackEl.textContent = '';
+            feedbackEl.style.color = colors.transparent;
+
+            if (amount <= 0) return;
+
+            if (amount <= 200) {
+                segments[0].style.backgroundColor = colors.red;
+                feedbackEl.textContent = 'Valor muito baixo, pode não ter resultados.';
+                feedbackEl.style.color = colors.red;
+            } else if (amount <= 450) {
+                [segments[0]].forEach(s => s.style.backgroundColor = colors.red);
+                segments[1].style.backgroundColor = colors.orange;
+                feedbackEl.textContent = 'Ainda é um valor baixo, mas pode gerar algum tráfego.';
+                feedbackEl.style.color = colors.orange;
+            } else if (amount <= 999) {
+                [segments[0]].forEach(s => s.style.backgroundColor = colors.red);
+                [segments[1]].forEach(s => s.style.backgroundColor = colors.orange);
+                segments[2].style.backgroundColor = colors.yellow;
+                feedbackEl.textContent = 'Valor OK para iniciar e testar campanhas.';
+                feedbackEl.style.color = colors.yellow;
+            } else if (amount <= 1500) {
+                [segments[0]].forEach(s => s.style.backgroundColor = colors.red);
+                [segments[1]].forEach(s => s.style.backgroundColor = colors.orange);
+                [segments[2]].forEach(s => s.style.backgroundColor = colors.yellow);
+                segments[3].style.backgroundColor = colors.green;
+                feedbackEl.textContent = 'Valor recomendado para obter bons resultados.';
+                feedbackEl.style.color = colors.green;
+            } else {
+                [segments[0], segments[1], segments[2], segments[3], segments[4]].forEach((s, i) => s.style.backgroundColor = [colors.red, colors.orange, colors.yellow, colors.green, colors.blue][i]);
+                feedbackEl.textContent = 'Perfil de investidor arrojado que sabe o que quer!';
+                feedbackEl.style.color = colors.blue;
+            }
+        };
+
+        const openModal = (modalElem) => {
+            modalElem.classList.remove('hidden');
+            modalElem.querySelector('.modal-content').classList.add('modal-enter');
+            if (modalElem.id === 'investment-modal') {
+                updateInvestmentFeedback(0);
+            }
+        };
+        const closeModal = (modalElem) => {
+            const content = modalElem.querySelector('.modal-content');
+            content.classList.remove('modal-leave');
+            content.classList.add('modal-leave');
+            setTimeout(() => {
+                modalElem.classList.add('hidden');
+                content.classList.remove('modal-leave');
+            }, 300);
+        };
+
+        const startDiscountTimer = () => {
+            if (discountState.timerId) clearInterval(discountState.timerId);
+            let duration = 20 * 60;
+            const timerEl = document.getElementById('countdown-timer');
+            const acceptBtn = document.getElementById('accept-discount-btn');
+            acceptBtn.disabled = false;
+            discountState.timerId = setInterval(() => {
+                const minutes = Math.floor(duration / 60);
+                const seconds = duration % 60;
+                timerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                duration--;
+                if (duration < 0) {
+                    clearInterval(discountState.timerId);
+                    acceptBtn.disabled = true;
+                    timerEl.textContent = "Expirado!";
+                }
+            }, 1000);
+        };
+
+        // --- EVENT LISTENERS ---
+        document.body.addEventListener('click', (e) => {
+            if (e.target.matches('.navigate-btn')) {
+                const targetStep = e.target.dataset.stepTarget;
+                navigateToStep(targetStep);
+                if (targetStep === '5') renderFinalCart();
+            }
+
+            if (e.target.closest('.service-type-btn')) {
+                serviceType = e.target.closest('.service-type-btn').dataset.type;
+                cart = {};
+                selectedCategories = [];
+                updateCartAndUI();
+                renderCategorySelection();
+                navigateToStep(3);
+            }
+
+            if (e.target.id === 'continue-from-categories-btn' && selectedCategories.length > 0) {
+                currentConfigIndex = 0;
+                renderServiceConfiguration(currentConfigIndex);
+                navigateToStep(4);
+            }
+
+            if (e.target.id === 'prev-config-btn') {
+                if (currentConfigIndex > 0) {
+                    currentConfigIndex--;
+                    renderServiceConfiguration(currentConfigIndex);
+                } else {
+                    navigateToStep(3);
+                }
+            }
+            if (e.target.id === 'next-config-btn') {
+                if (currentConfigIndex < selectedCategories.length - 1) {
+                    currentConfigIndex++;
+                    renderServiceConfiguration(currentConfigIndex);
+                } else {
+                    navigateToStep(5);
+                    renderFinalCart();
+                }
+            }
+
+            const configTarget = e.target.closest('[data-id]');
+            if (e.target.closest('#service-config-container') && configTarget) {
+                const id = configTarget.dataset.id;
+                if (configTarget.matches('.add-btn')) {
+                    if (id === 'trafego_gestao') {
+                        openModal(document.getElementById('investment-modal'));
+                    } else {
+                        cart[id] = 1;
+                        renderServiceConfiguration(currentConfigIndex);
+                    }
+                } else if (configTarget.matches('.remove-item-btn')) {
+                    if (id === 'trafego_gestao') delete cart['trafego_investimento_custom'];
+                    delete cart[id];
+                    renderServiceConfiguration(currentConfigIndex);
+                } else if (configTarget.matches('.quantity-change-btn')) {
+                    const currentQty = cart[id] || 0;
+                    const action = configTarget.dataset.action;
+                    const newQty = action === 'increase' ? currentQty + 1 : Math.max(0, currentQty - 1);
+
+                    if (newQty === 0) delete cart[id];
+                    else cart[id] = newQty;
+                    
+                    const input = configTarget.parentElement.querySelector('.quantity-input');
+                    if (input) input.value = newQty;
+                    
+                    const subtotalEl = configTarget.closest('.bg-brand-bg').querySelector(`#subtotal-${id}`);
+                    if(subtotalEl) {
+                        const service = findServiceById(id);
+                        const subtotalValue = calculateItemSubtotal(service, newQty);
+                        subtotalEl.innerHTML = subtotalValue > 0 ? `Subtotal: <span class="text-brand-white">${formatCurrency(subtotalValue)}</span>` : '';
+                    }
+                }
+                updateCartAndUI();
+            }
+            
+            const finalCartTarget = e.target.closest('[data-id]');
+            if (e.target.closest('#final-cart-items') && finalCartTarget) {
+                const id = finalCartTarget.dataset.id;
+                 if (finalCartTarget.matches('.remove-item-btn')) {
+                    delete cart[id];
+                    if (id === 'trafego_gestao') delete cart['trafego_investimento_custom'];
+                } else if (finalCartTarget.matches('.quantity-change-final-btn')) {
+                    const currentQty = cart[id] || 0;
+                    const action = finalCartTarget.dataset.action;
+                    const newQty = action === 'increase' ? currentQty + 1 : Math.max(0, currentQty - 1);
+                    if (newQty === 0) delete cart[id];
+                    else cart[id] = newQty;
+                }
+                updateCartAndUI();
+            }
+
+            if (e.target.matches('.modal-close-btn')) {
+                closeModal(e.target.closest('.fixed'));
+            }
+        });
+
+        document.getElementById('user-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            userData = Object.fromEntries(formData.entries());
+            navigateToStep(2);
+        });
+        
+        document.getElementById('service-config-container').addEventListener('input', (e) => {
+            const target = e.target;
+            if (!target.matches('.quantity-input')) return;
+            const id = target.dataset.id;
+            const service = findServiceById(id);
+            const newQty = parseInt(target.value, 10) || 0;
+            
+            if (newQty === 0) delete cart[id];
+            else cart[id] = newQty;
+
+            const subtotalEl = document.getElementById(`subtotal-${id}`);
+            if (subtotalEl) {
+                const subtotalValue = calculateItemSubtotal(service, newQty);
+                subtotalEl.innerHTML = subtotalValue > 0 ? `Subtotal: <span class="text-brand-white">${formatCurrency(subtotalValue)}</span>` : '';
+            }
+            updateCartAndUI();
+        });
+        
+        document.getElementById('final-cart-items').addEventListener('input', (e) => {
+            const target = e.target;
+            if (!target.matches('.quantity-input-final')) return;
+            const id = target.dataset.id;
+            const newQty = parseInt(target.value, 10) || 0;
+            if (newQty === 0) delete cart[id];
+            else cart[id] = newQty;
+            updateCartAndUI();
+        });
+
+        const investmentInput = document.getElementById('investment-input');
+        investmentInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            const numericValue = Number(value) / 100;
+            updateInvestmentFeedback(numericValue);
+            
+            if (value) {
+                value = numericValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            }
+            e.target.value = value;
+        });
+        document.getElementById('investment-confirm-btn').addEventListener('click', () => {
+            const rawValue = investmentInput.value.replace(/\D/g, '');
+            const investmentAmount = Number(rawValue) / 100;
+            if (investmentAmount > 0) {
+                cart['trafego_gestao'] = 1;
+                cart['trafego_investimento_custom'] = investmentAmount;
+                renderServiceConfiguration(currentConfigIndex);
+                updateCartAndUI();
+                closeModal(document.getElementById('investment-modal'));
+                investmentInput.value = '';
+            }
+        });
+
+        document.getElementById('cancel-order-btn').addEventListener('click', () => {
+            if (discountState.applied) return;
+            const termsEl = document.getElementById('discount-terms');
+            termsEl.textContent = serviceType === 'recorrente' 
+                ? 'O desconto de 50% será aplicado no valor total do primeiro mês.' 
+                : 'O desconto de 50% será aplicado sobre o valor total do seu pedido.';
+            openModal(document.getElementById('discount-modal'));
+            startDiscountTimer();
+        });
+        document.getElementById('accept-discount-btn').addEventListener('click', () => {
+            discountState.applied = true;
+            if (discountState.timerId) clearInterval(discountState.timerId);
+            document.getElementById('cancel-order-btn').disabled = true;
+            updateCartAndUI();
+            closeModal(document.getElementById('discount-modal'));
+        });
+        document.getElementById('reject-discount-btn').addEventListener('click', () => {
+            location.reload();
+        });
+
+        document.getElementById('finalize-final-btn').addEventListener('click', () => {
+            let message = `Olá, Carlos! Gostaria de um orçamento.\n\n`;
+            message += `*DADOS DO CLIENTE:*\n`;
+            message += `Nome: ${userData.name || 'Não informado'}\n`;
+            message += `E-mail: ${userData.email || 'Não informado'}\n`;
+            message += `Celular: ${userData.phone || 'Não informado'}\n`;
+            message += `Instagram: ${userData.instagram || 'Não informado'}\n`;
+            message += `Área de Atuação: ${userData.field || 'Não informado'}\n\n`;
+            message += `*SERVIÇOS SOLICITADOS (${serviceType === 'recorrente' ? 'Plano Recorrente' : 'Serviço Avulso'}):*\n`;
+
+            Object.entries(cart).sort((a,b) => a[0].localeCompare(b[0])).forEach(([id, value]) => {
+                let service, itemTotal, name;
+                if (id === 'trafego_investimento_custom') {
+                    service = { name: 'Investimento em Anúncios' };
+                    itemTotal = value;
+                    name = service.name;
+                } else {
+                    service = findServiceById(id);
+                    itemTotal = calculateItemSubtotal(service, value);
+                    name = service.type === 'quantity' ? `${service.name} (Qtd: ${value})` : service.name;
+                }
+                message += `- ${name}: ${formatCurrency(itemTotal)}\n`;
+            });
+
+            const totals = calculateTotals();
+            message += `\n*RESUMO DO ORÇAMENTO:*\n`;
+            if (discountState.applied) {
+                const discountTerm = serviceType === 'recorrente' ? 'no valor total do primeiro mês.' : 'no valor total.';
+                message += `*OFERTA ESPECIAL APLICADA (50% OFF ${discountTerm})*\n\n`;
+                message += `Subtotal: ${formatCurrency(totals.originalFirstMonthPayment)}\n`;
+                message += `Desconto (50%): -${formatCurrency(totals.discountAmount)}\n`;
+                message += `--------------------------------\n`;
+                message += `*Total a Pagar:* ${formatCurrency(totals.finalFirstMonthPayment)}\n`;
+            } else {
+                message += `*Pagamento Inicial:* ${formatCurrency(totals.originalFirstMonthPayment)}\n`;
+            }
+            
+            if (serviceType === 'recorrente' && totals.monthlyTotal > 0) {
+                message += `*Mensalidade (a partir do 2º mês):* ${formatCurrency(totals.monthlyTotal)}`;
+            }
+
+            const whatsappUrl = `https://wa.me/5575981865878?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        });
+
+        // --- INICIALIZAÇÃO ---
+        navigateToStep(0);
+        updateCartAndUI();
+    });
+    </script>
+    <div id="loading-overlay" class="fixed inset-0 bg-brand-bg/80 backdrop-blur-sm flex-col flex items-center justify-center hidden z-[999]">
+    <div class="flex flex-col items-center text-center">
+        <svg class="animate-spin h-10 w-10 text-brand-bright-blue" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-brand-text-light font-semibold mt-4 text-lg">Alterando para o Plano Recorrente...</p>
+    </div>
+</div>
+<div id="details-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
+    <div class="modal-content bg-brand-card rounded-lg p-8 max-w-md w-full relative modal-enter">
+        <button class="modal-close-btn absolute top-4 right-4 text-brand-text-dark hover:text-brand-white text-3xl leading-none">&times;</button>
+        <h3 id="details-modal-title" class="text-2xl font-bold text-brand-white mb-4"></h3>
+        <p class="text-brand-text-dark mb-4">Confira os entregáveis deste serviço:</p>
+        <ul id="details-modal-list" class="space-y-2">
+            </ul>
+    </div>
+</div>
+</body>
+</html>
