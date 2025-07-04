@@ -9,6 +9,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- máscara de input -->
     <script src="https://unpkg.com/imask"></script>
+
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/jspdf-autotable@latest/dist/jspdf.plugin.autotable.js"></script>
+
+
     <!-- Google Fonts: Poppins -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -213,6 +218,10 @@
                 <button id="finalize-final-btn" class="mt-6 w-full bg-brand-green text-brand-white font-bold py-3 rounded-lg shadow-lg hover:bg-brand-lime transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed">
                     Finalizar e Enviar no WhatsApp
                 </button>
+                <!-- ADICIONE O BOTÃO DE EXPORTAR PDF AQUI -->
+<button id="export-pdf-btn" class="mt-2 w-full bg-brand-dark-blue text-brand-text-light font-semibold py-2 rounded-lg hover:bg-brand-bright-blue hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+    Exportar Orçamento em PDF
+</button>
                 <button data-step-target="4" id="back-to-config-btn" class="navigate-btn mt-4 w-full text-brand-text-dark font-semibold py-2 rounded-lg hover:bg-brand-dark-blue/50 transition-colors">
                     &larr; Voltar e editar serviços
                 </button>
@@ -334,6 +343,97 @@
         const budgetFooter = document.getElementById('budget-footer');
 
         // --- FUNÇÕES UTILITÁRIAS ---
+
+        // ADICIONE ESTA NOVA FUNÇÃO AO SEU SCRIPT
+const generatePDF = () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // --- CABEÇALHO DO DOCUMENTO ---
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(20);
+    doc.setTextColor('#022b3a'); // dark-blue
+    doc.text('Orçamento Personalizado', 105, 20, { align: 'center' });
+    
+    doc.setFontSize(10);
+    doc.setTextColor('#8892b0'); // text-dark
+    doc.setFont('helvetica', 'normal');
+    const today = new Date();
+    doc.text(`Gerado em: ${today.toLocaleDateString('pt-BR')}`, 105, 26, { align: 'center' });
+
+    // --- DADOS DO CLIENTE ---
+    doc.setFontSize(12);
+    doc.setTextColor('#022b3a');
+    doc.setFont('helvetica', 'bold');
+    doc.text('Dados do Cliente:', 14, 40);
+    
+    doc.setFontSize(10);
+    doc.setTextColor('#172a45'); // card
+    doc.setFont('helvetica', 'normal');
+    const clientInfo = [
+        [`Nome:`, `${userData.name || 'Não informado'}`],
+        [`E-mail:`, `${userData.email || 'Não informado'}`],
+        [`Celular:`, `${userData.phone || 'Não informado'}`],
+        [`Instagram:`, `${userData.instagram || 'Não informado'}`],
+        [`Área de Atuação:`, `${userData.field || 'Não informado'}`]
+    ];
+    doc.autoTable({
+        startY: 44,
+        body: clientInfo,
+        theme: 'plain',
+        styles: { fontSize: 10, cellPadding: 1.5 },
+        columnStyles: { 0: { fontStyle: 'bold' } }
+    });
+
+    // --- TABELA DE SERVIÇOS ---
+    const tableBody = [];
+    const totals = calculateTotals();
+
+    Object.entries(cart).forEach(([id, value]) => {
+        let serviceName, quantity, totalValue;
+        if (id === 'trafego_investimento_custom') {
+            serviceName = 'Investimento em Anúncios';
+            quantity = 'N/A';
+            totalValue = formatCurrency(value);
+        } else {
+            const service = findServiceById(id);
+            serviceName = service.name;
+            quantity = service.type === 'quantity' ? value : 'Incluso';
+            totalValue = formatCurrency(calculateItemSubtotal(service, value));
+        }
+        tableBody.push([serviceName, quantity, totalValue]);
+    });
+
+    doc.autoTable({
+        head: [['Serviço Contratado', 'Quantidade', 'Valor']],
+        body: tableBody,
+        startY: doc.lastAutoTable.finalY + 10,
+        headStyles: { fillColor: '#022b3a', textColor: '#ffffff' },
+        styles: { halign: 'center' },
+        columnStyles: { 0: { halign: 'left' } }
+    });
+
+    // --- RESUMO FINANCEIRO ---
+    const summaryData = [
+        ['Subtotal', formatCurrency(totals.originalFirstMonthPayment)],
+        discountState.applied ? ['Desconto (50%)', `-${formatCurrency(totals.discountAmount)}`] : null,
+        ['Total a Pagar (1º Mês)', formatCurrency(totals.finalFirstMonthPayment)],
+        serviceType === 'recorrente' ? ['Mensalidade (a partir do 2º mês)', formatCurrency(totals.monthlyTotal)] : null
+    ].filter(row => row !== null); // Remove linhas nulas (se não houver desconto/mensalidade)
+
+    doc.autoTable({
+        body: summaryData,
+        startY: doc.lastAutoTable.finalY + 5,
+        theme: 'grid',
+        styles: { fontSize: 10, halign: 'right' },
+        columnStyles: { 0: { fontStyle: 'bold', halign: 'right' } }
+    });
+
+    // --- SALVAR O ARQUIVO ---
+    const fileName = `Orcamento-${userData.name.split(' ')[0] || 'Cliente'}-${today.toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`;
+    doc.save(fileName);
+};
+
         const showToast = (message, type = 'success') => {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -991,6 +1091,17 @@ if (e.target.closest('#final-cart-items') && finalCartTarget) {
             }
             const whatsappUrl = `https://wa.me/5575981865878?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
+        });
+
+         // VAI AQUI! COLE O SEU CÓDIGO ABAIXO DESTA LINHA
+        document.getElementById('export-pdf-btn').addEventListener('click', () => {
+            showToast('Gerando seu PDF...', 'info');
+            try {
+                generatePDF();
+            } catch (error) {
+                console.error("Erro ao gerar PDF:", error);
+                showToast('Ocorreu um erro ao gerar o PDF.', 'error');
+            }
         });
 
         // --- INICIALIZAÇÃO ---
