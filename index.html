@@ -466,6 +466,9 @@
             if (options.rerenderFinalList && !document.getElementById('step-5').classList.contains('hidden')) {
     renderFinalCart();
 }
+ const sessionData = { cart, serviceType, userData, selectedCategories, discountState };
+    localStorage.setItem('calculadoraSession', JSON.stringify(sessionData));
+
         };
 
         const renderFinalCart = () => {
@@ -716,6 +719,9 @@
         document.body.addEventListener('click', (e) => {
             if (e.target.matches('.navigate-btn')) {
                 const targetStep = e.target.dataset.stepTarget;
+                if(targetStep === '1') {
+        localStorage.removeItem('calculadoraSession');
+    }
                 navigateToStep(targetStep);
                 if (targetStep === '5') renderFinalCart();
             }
@@ -956,9 +962,59 @@ if (e.target.closest('#final-cart-items') && finalCartTarget) {
         });
 
         // --- INICIALIZAÇÃO ---
-        navigateToStep(0);
-        updateCartAndUI();
+        const savedSession = localStorage.getItem('calculadoraSession');
+
+if (savedSession) {
+    // Se encontrou dados salvos, pergunta ao usuário o que fazer
+    openModal(document.getElementById('restore-session-modal'));
+} else {
+    // Se não, inicia normalmente
+    navigateToStep(0);
+}
+
+document.getElementById('restore-yes-btn').addEventListener('click', () => {
+    const parsedData = JSON.parse(savedSession);
+    
+    // Carrega os dados salvos para o estado da aplicação
+    cart = parsedData.cart || {};
+    serviceType = parsedData.serviceType || '';
+    userData = parsedData.userData || {};
+    selectedCategories = parsedData.selectedCategories || [];
+    discountState = parsedData.discountState || { applied: false, timerId: null };
+
+    // Atualiza a UI com os dados restaurados
+    renderCategorySelection();
+    updateCartAndUI();
+    
+    // Leva o usuário para a última etapa relevante
+    if (Object.keys(cart).length > 0) {
+        navigateToStep(3); // Vai para a seleção de categorias
+    } else {
+        navigateToStep(2); // Vai para a seleção de tipo de serviço
+    }
+    
+    closeModal(document.getElementById('restore-session-modal'));
+    showToast('Sessão restaurada com sucesso!', 'success');
+});
+
+document.getElementById('restore-no-btn').addEventListener('click', () => {
+    localStorage.removeItem('calculadoraSession');
+    closeModal(document.getElementById('restore-session-modal'));
+    navigateToStep(0);
+});
+
     });
+
     </script>
+    <div id="restore-session-modal" class="fixed inset-0 bg-black/70 flex items-center justify-center p-4 hidden z-50">
+    <div class="modal-content bg-brand-card rounded-lg p-8 max-w-md w-full relative modal-enter text-center">
+        <h3 class="text-2xl font-bold text-brand-white mb-2">Orçamento em Andamento</h3>
+        <p class="text-brand-text-light mb-6">Encontramos um orçamento que você não finalizou. Deseja continuar de onde parou?</p>
+        <div class="flex gap-4">
+            <button id="restore-no-btn" class="w-full bg-brand-dark-blue/80 text-brand-text-light font-semibold py-3 rounded-lg hover:bg-brand-dark-blue">Não, começar do zero</button>
+            <button id="restore-yes-btn" class="w-full bg-brand-green text-brand-white font-bold py-3 rounded-lg hover:bg-brand-lime transition-colors">Sim, continuar</button>
+        </div>
+    </div>
+</div>
 </body>
 </ht
