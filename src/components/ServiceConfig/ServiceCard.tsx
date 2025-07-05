@@ -137,7 +137,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       {isAvailable ? (
         <div>{renderControls()}</div>
       ) : (
-        <div className="absolute inset-0 bg-slate-800/50 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl p-4 text-center">
+        <div className="absolute inset-0 bg-slate-800/50 backdrop-blur-[1.3px] flex flex-col items-center justify-center rounded-xl p-4 text-center">
           <div className="p-3 bg-blue-500/20 rounded-lg mb-4">
             <Plus className="w-8 h-8 text-blue-400" />
           </div>

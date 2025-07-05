@@ -15,7 +15,7 @@ const BudgetFooter: React.FC<BudgetFooterProps> = ({
   nextLabel = 'Próximo',
 }) => {
   return (
-    <footer className="fixed bottom-0 left-0 right-0 bg-slate-800/95 backdrop-blur-sm border-t border-slate-600 z-40">
+    <footer className="fixed bottom-0 left-0 right-0 bg-slate-800/95 backdrop-blur-[1.3px] border-t border-slate-600 z-40">
       <div className="container mx-auto p-4 flex justify-between items-center">
         <button
           onClick={onPrev}

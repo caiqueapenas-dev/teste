@@ -9,6 +9,19 @@ export interface Service {
   deliverables: string[];
 }
 
+export interface Service {
+  id: string;
+  name: string;
+  price: number;
+  type: 'checkbox' | 'quantity' | 'fixed';
+  billing: 'monthly' | 'once';
+  description: string;
+  unit: string;
+  deliverables: string[];
+  status?: 'soon';
+}
+
+
 export interface ServiceCategory {
   category: string;
   description: string;
