@@ -21,13 +21,13 @@ export const services: ServiceCategory[] = [
       },
       {
         id: 'sm_configuracao',
-        name: 'Otimização do Perfil',
-        price: 299.40,
-        type: 'checkbox',
-        billing: 'once',
-        description: 'Ajuste completo de bio, destaques, links e segurança.',
-        unit: '',
-        deliverables: [
+         name: 'Otimização de Perfil (Instagram)',
+         price: 299.40,
+         type: 'checkbox',
+         billing: 'once',
+         description: 'Ajuste completo de bio, destaques, links e segurança.',
+         unit: '',
+         deliverables: [
           'Análise completa do perfil atual',
           'Criação de 5 destaques estratégicos',
           'Configuração de segurança (2FA)'
@@ -181,32 +181,32 @@ export const services: ServiceCategory[] = [
     ]
   },
   {
-    category: 'Google Meu Negócio',
-    description: 'Seja a primeira opção para clientes na sua região e domine as buscas locais.',
-    items: [
-      {
-        id: 'gmn_setup',
-        name: 'Setup Inicial',
-        price: 997,
-        type: 'fixed',
-        billing: 'once',
-        description: 'Criação, configuração e otimização completa do seu perfil.',
-        unit: '',
-        deliverables: [
-          'Criação e verificação do perfil',
-          'Otimização de SEO local',
-          'Cadastro de 10 produtos/serviços iniciais'
-        ]
-      },
-      {
-        id: 'gmn_mensal',
-        name: 'Manutenção Mensal',
-        price: 349,
-        type: 'fixed',
-        billing: 'monthly',
-        description: 'Gerenciamento contínuo do seu perfil, postagens e avaliações.',
-        unit: '/mês',
-        deliverables: [
+         category: 'Google Meu Negócio',
+     description: 'Seja a primeira opção para clientes na sua região e domine as buscas locais.',
+     items: [
+       {
+         id: 'gmn_setup',
+         name: 'Configuração Inicial do GMN',
+         price: 997,
+         type: 'fixed',
+         billing: 'once',
+         description: 'Criação, configuração e otimização completa do seu perfil.',
+         unit: '',
+                  deliverables: [
+           'Criação e verificação do perfil',
+           'Otimização de SEO local',
+           'Cadastro de 10 produtos/serviços iniciais'
+         ]
+       },
+       {
+         id: 'gmn_mensal',
+         name: 'Gestão Mensal do GMN',
+         price: 349,
+         type: 'fixed',
+         billing: 'monthly',
+         description: 'Gerenciamento contínuo do seu perfil, postagens e avaliações.',
+         unit: '/mês',
+         deliverables: [
           '4 postagens mensais',
           'Resposta a todas as avaliações',
           'Atualização de horário e informações'
