@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Download, MessageCircle, X } from 'lucide-react';
+import { ArrowLeft, MessageCircle, X } from 'lucide-react';
 import { Cart, UserData, Totals } from '../../types';
 import FinalCartItem from './FinalCartItem';
 import DiscountModal from '../Modals/DiscountModal';
-import { services } from '../../data/services'; 
+import { services } from '../../data/services';
 
 interface FinalBudgetStepProps {
   cart: Cart;
@@ -37,112 +37,6 @@ const FinalBudgetStep: React.FC<FinalBudgetStepProps> = ({
   showToast
 }) => {
   const [showDiscountModal, setShowDiscountModal] = useState(false);
-
-  const generatePDF = () => {
-    showToast('Gerando seu PDF...', 'info');
-    try {
-      // Import jsPDF dynamically
-      import('jspdf').then(({ jsPDF }) => {
-        const doc = new jsPDF();
-
-        // Header
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(20);
-        doc.setTextColor('#022b3a');
-        doc.text('Orçamento Personalizado', 105, 20, { align: 'center' });
-        
-        doc.setFontSize(10);
-        doc.setTextColor('#8892b0');
-        doc.setFont('helvetica', 'normal');
-        const today = new Date();
-        doc.text(`Gerado em: ${today.toLocaleDateString('pt-BR')}`, 105, 26, { align: 'center' });
-
-        // Client data
-        doc.setFontSize(12);
-        doc.setTextColor('#022b3a');
-        doc.setFont('helvetica', 'bold');
-        doc.text('Dados do Cliente:', 14, 40);
-        
-        let yPos = 50;
-        const clientInfo = [
-          `Nome: ${userData.name || 'Não informado'}`,
-          `E-mail: ${userData.email || 'Não informado'}`,
-          `Celular: ${userData.phone || 'Não informado'}`,
-          `Instagram: ${userData.instagram || 'Não informado'}`,
-          `Área de Atuação: ${userData.field || 'Não informado'}`
-        ];
-
-        doc.setFontSize(10);
-        doc.setTextColor('#172a45');
-        doc.setFont('helvetica', 'normal');
-        clientInfo.forEach(info => {
-          doc.text(info, 14, yPos);
-          yPos += 6;
-        });
-
-        // Services
-        yPos += 10;
-        doc.setFontSize(12);
-        doc.setTextColor('#022b3a');
-        doc.setFont('helvetica', 'bold');
-        doc.text('Serviços Contratados:', 14, yPos);
-        yPos += 10;
-
-        doc.setFontSize(10);
-        doc.setTextColor('#172a45');
-        doc.setFont('helvetica', 'normal');
-        
-        Object.entries(cart).forEach(([id, value]) => {
-          let serviceName, totalValue;
-          if (id === 'trafego_investimento_custom') {
-            serviceName = 'Investimento em Anúncios';
-            totalValue = formatCurrency(value);
-          } else {
-            const service = findServiceById(id);
-            serviceName = service.type === 'quantity' ? `${service.name} (Qtd: ${value})` : service.name;
-            totalValue = formatCurrency(calculateItemSubtotal(service, value));
-          }
-          doc.text(`• ${serviceName}: ${totalValue}`, 14, yPos);
-          yPos += 6;
-        });
-
-        // Totals
-        yPos += 10;
-        doc.setFontSize(12);
-        doc.setTextColor('#022b3a');
-        doc.setFont('helvetica', 'bold');
-        doc.text('Resumo Financeiro:', 14, yPos);
-        yPos += 10;
-
-        doc.setFontSize(10);
-        doc.setTextColor('#172a45');
-        doc.setFont('helvetica', 'normal');
-        
-        if (discountApplied) {
-          doc.text(`Subtotal: ${formatCurrency(totals.originalFirstMonthPayment)}`, 14, yPos);
-          yPos += 6;
-          doc.text(`Desconto (50%): -${formatCurrency(totals.discountAmount)}`, 14, yPos);
-          yPos += 6;
-          doc.setFont('helvetica', 'bold');
-          doc.text(`Total a Pagar: ${formatCurrency(totals.finalFirstMonthPayment)}`, 14, yPos);
-        } else {
-          doc.text(`Total a Pagar: ${formatCurrency(totals.originalFirstMonthPayment)}`, 14, yPos);
-        }
-
-        if (serviceType === 'recorrente' && totals.monthlyTotal > 0) {
-          yPos += 6;
-          doc.text(`Mensalidade: ${formatCurrency(totals.monthlyTotal)}`, 14, yPos);
-        }
-
-        const fileName = `Orcamento-${userData.name.split(' ')[0] || 'Cliente'}-${today.toLocaleDateString('pt-BR').replace(/\//g, '-')}.pdf`;
-        doc.save(fileName);
-        showToast('PDF gerado com sucesso!', 'success');
-      });
-    } catch (error) {
-      console.error('Erro ao gerar PDF:', error);
-      showToast('Ocorreu um erro ao gerar o PDF.', 'error');
-    }
-  };
 
   const sendToWhatsApp = () => {
     let message = `Olá, Carlos! Gostaria de um orçamento.\n\n`;
@@ -205,8 +99,8 @@ const FinalBudgetStep: React.FC<FinalBudgetStepProps> = ({
   };
 
   // Separate items by billing type
-  const oneTimeItems = [];
-  const recurringItems = [];
+  const oneTimeItems: any[] = [];
+  const recurringItems: any[] = [];
 
   Object.entries(cart).forEach(([id, value]) => {
     if (value === 0) return;
@@ -301,7 +195,6 @@ const FinalBudgetStep: React.FC<FinalBudgetStepProps> = ({
             </div>
           )}
         </div>
- {/* ADICIONADO: Resumo de Conteúdo Semanal */}
         {(() => {
           const totalPosts = Object.entries(cart).reduce((total, [id, quantity]) => {
             const serviceInfo = services
@@ -396,14 +289,6 @@ const FinalBudgetStep: React.FC<FinalBudgetStepProps> = ({
           >
             <MessageCircle className="w-5 h-5" />
             Finalizar e Enviar no WhatsApp
-          </button>
-          
-          <button
-            onClick={generatePDF}
-            className="w-full flex items-center justify-center gap-3 bg-slate-700 text-slate-300 font-semibold py-3 rounded-lg hover:bg-slate-600 transition-colors"
-          >
-            <Download className="w-5 h-5" />
-            Exportar Orçamento em PDF
           </button>
           
           <button
