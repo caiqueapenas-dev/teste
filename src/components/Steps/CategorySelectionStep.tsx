@@ -42,6 +42,7 @@ const CategorySelectionStep: React.FC<CategorySelectionStepProps> = ({
       
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
         {services.map((category) => {
+          const isComingSoon = category.items.some(item => item.status === 'soon');
           const isAvailable = serviceType === 'avulso' 
             ? category.items.some(item => item.billing === 'once') 
             : true;
@@ -50,10 +51,10 @@ const CategorySelectionStep: React.FC<CategorySelectionStepProps> = ({
           return (
             <div key={category.category} className="relative">
               <button
-                onClick={() => isAvailable && toggleCategory(category.category)}
-                disabled={!isAvailable}
+                onClick={() => !isComingSoon && isAvailable && toggleCategory(category.category)}
+                disabled={!isAvailable || isComingSoon}
                 className={`w-full bg-slate-800 p-6 rounded-xl border-2 transition-all duration-300 text-left ${
-                  isAvailable
+                  isAvailable && !isComingSoon
                     ? `cursor-pointer hover:border-blue-500 hover:bg-slate-700 ${
                         isSelected ? 'border-blue-500 bg-slate-700' : 'border-transparent'
                       }`
@@ -68,7 +69,16 @@ const CategorySelectionStep: React.FC<CategorySelectionStepProps> = ({
                 </p>
               </button>
 
-              {!isAvailable && (
+              {isComingSoon ? (
+                <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl p-6 text-center">
+                  <div className="p-3 bg-gray-500/20 rounded-lg mb-4">
+                    <Lock className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <p className="text-lg font-semibold text-slate-300">
+                    Em Breve
+                  </p>
+                </div>
+              ) : !isAvailable && (
                 <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl p-6 text-center">
                   <div className="p-3 bg-blue-500/20 rounded-lg mb-4">
                     <Lock className="w-8 h-8 text-blue-400" />

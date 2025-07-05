@@ -181,7 +181,7 @@ export const services: ServiceCategory[] = [
     ]
   },
   {
-         category: 'Google Meu Negócio',
+     category: 'Google Meu Negócio',
      description: 'Seja a primeira opção para clientes na sua região e domine as buscas locais.',
      items: [
        {
@@ -211,6 +211,23 @@ export const services: ServiceCategory[] = [
           'Resposta a todas as avaliações',
           'Atualização de horário e informações'
         ]
+      }
+    ]
+  },
+  {
+    category: 'Criação de Site',
+    description: 'Desenvolvemos sites institucionais e landing pages de alta conversão para fortalecer sua presença online.',
+    items: [
+      {
+        id: 'site_institucional',
+        name: 'Criação de Site',
+        price: 0,
+        type: 'fixed',
+        billing: 'once',
+        description: 'Serviço disponível em breve.',
+        unit: '',
+        deliverables: [],
+        status: 'soon'
       }
     ]
   }
