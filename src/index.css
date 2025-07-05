@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+    scroll-behavior: smooth;
+    /* A cor de fundo principal agora será aplicada diretamente nos elementos */
+  }
+}
+
+@layer components {
+  /* Efeito de gradiente sutil no botão principal */
+  .cta-button {
+      @apply transition-all duration-300;
+      box-shadow: 0 4px 15px 0 rgba(4, 150, 255, 0.3);
+  }
+  .cta-button:hover {
+      @apply transform -translate-y-1;
+      box-shadow: 0 6px 20px 0 rgba(4, 150, 255, 0.4);
+  }
+  /* Efeito de destaque no botão secundário */
+  .secondary-cta-button:hover {
+      @apply scale-105 transition-transform duration-300;
+  }
+  .service-card:hover {
+      @apply -translate-y-1;
+      box-shadow: 0 8px 25px rgba(2, 43, 58, 0.15);
+  }
+}
