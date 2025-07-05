@@ -21,11 +21,13 @@ export interface UserData {
   phone: string;
   instagram: string;
   field: string;
+  lgpdAccepted: boolean;
 }
 
 export interface Cart {
   [serviceId: string]: number;
 }
+
 
 export interface DiscountState {
   applied: boolean;

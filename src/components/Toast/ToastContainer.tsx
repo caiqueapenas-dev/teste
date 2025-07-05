@@ -51,7 +51,7 @@ const ToastContainer: React.FC<ToastContainerProps> = ({ toasts, onRemove }) => 
         </div>
       ))}
       
-      <style jsx>{`
+      <style>{`
         @keyframes toast-in {
           from {
             transform: translateX(100%);

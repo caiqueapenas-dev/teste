@@ -15,9 +15,13 @@ const UserDataStep: React.FC<UserDataStepProps> = ({
   onNext,
   onPrev
 }) => {
-  const [formData, setFormData] = useState<UserData>(userData);
+  const [formData, setFormData] = useState<UserData>({
+    ...userData,
+    lgpdAccepted: false, // Adicionando o campo lgpd ao estado inicial
+  });
 
-  const handleInputChange = (field: keyof UserData, value: string) => {
+
+  const handleInputChange = (field: keyof UserData, value: string | boolean) => {
     const updatedData = { ...formData, [field]: value };
     setFormData(updatedData);
     onUserDataChange(updatedData);
@@ -42,16 +46,22 @@ const handlePhoneChange = (value: string) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.name && formData.email && formData.phone && formData.field) {
+    // **AQUI VOCÊ ENVIARIA OS DADOS PARA SEU BANCO DE DADOS **
+    // Exemplo:
+    // sendToDatabase(formData);
+    console.log("Dados capturados:", formData);
+    
+    if (isValid) {
       onNext();
     }
   };
 
-  const isValid = formData.name && formData.email && formData.phone && formData.field;
+  const isValid = formData.name && formData.email && formData.phone && formData.field && formData.lgpdAccepted;
 
   return (
     <div className="max-w-xl mx-auto animate-in fade-in duration-600">
       <h2 className="text-3xl font-bold text-white mb-8 text-center">
+
         Primeiro, vamos nos conhecer.
       </h2>
       
@@ -67,6 +77,7 @@ const handlePhoneChange = (value: string) => {
             className="w-full bg-slate-800 border border-slate-600 text-white pl-12 pr-4 py-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
           />
         </div>
+
 
         <div className="relative">
           <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
@@ -110,16 +121,32 @@ const handlePhoneChange = (value: string) => {
             placeholder="Sua área de atuação (Ex: Nutricionista)"
             value={formData.field}
             onChange={(e) => handleInputChange('field', e.target.value)}
+            
             required
-            className="w-full bg-slate-800 border border-slate-600 text-white pl-12 pr-4 py-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-          />
-        </div>
+    className="w-full bg-slate-800 border border-slate-600 text-white pl-12 pr-4 py-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+  />
+</div>
 
-        <div className="flex gap-4 pt-4">
-          <button
-            type="button"
-            onClick={onPrev}
-            className="flex items-center gap-2 px-6 py-3 bg-slate-700 text-slate-300 font-semibold rounded-lg hover:bg-slate-600 transition-colors"
+<div className="pt-2">
+    <label className="flex items-center gap-3 cursor-pointer">
+        <input
+        type="checkbox"
+        checked={formData.lgpdAccepted}
+        onChange={(e) => handleInputChange('lgpdAccepted', e.target.checked)}
+        required
+        className="h-5 w-5 rounded border-slate-500 bg-slate-700 text-blue-500 focus:ring-blue-500"
+        />
+        <span className="text-slate-400 text-sm">
+        Ao continuar, você concorda em fornecer seus dados para contato, de acordo com a nossa <a href="/politica-de-privacidade" target="_blank" className="text-blue-400 hover:underline">Política de Privacidade</a>.
+        </span>
+    </label>
+</div>
+
+<div className="flex gap-4 pt-4">
+  <button
+    type="button"
+    onClick={onPrev}
+    className="flex items-center gap-2 px-6 py-3 bg-slate-700 text-slate-300 font-semibold rounded-lg hover:bg-slate-600 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Voltar
