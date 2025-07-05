@@ -124,22 +124,7 @@ const ServiceConfigStep: React.FC<ServiceConfigStepProps> = ({
         })}
       </div>
 
-      <div className="flex justify-between items-center mt-8 max-w-6xl mx-auto">
-        <button
-          onClick={onPrev}
-          className="flex items-center gap-2 px-6 py-3 bg-slate-700 text-slate-300 font-semibold rounded-lg hover:bg-slate-600 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Anterior
-        </button>
-        <button
-          onClick={onNext}
-          className="flex items-center gap-2 bg-green-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-green-700 transition-colors"
-        >
-          {isLastStep ? 'Ver Orçamento Final' : 'Próximo'}
-          <ArrowRight className="w-4 h-4" />
-        </button>
-      </div>
+
 
       <InvestmentModal
         isOpen={showInvestmentModal}

@@ -90,23 +90,7 @@ const CategorySelectionStep: React.FC<CategorySelectionStepProps> = ({
         })}
       </div>
 
-      <div className="flex justify-center items-center gap-6 mt-12">
-        <button
-          onClick={onPrev}
-          className="flex items-center gap-2 px-6 py-3 bg-slate-700 text-slate-300 font-semibold rounded-lg hover:bg-slate-600 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Voltar
-        </button>
-        <button
-          onClick={onNext}
-          disabled={selectedCategories.length === 0}
-          className="flex items-center gap-2 bg-green-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Continuar
-          <ArrowRight className="w-4 h-4" />
-        </button>
-      </div>
+      
     </div>
   );
 };

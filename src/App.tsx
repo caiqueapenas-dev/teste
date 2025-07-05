@@ -15,13 +15,14 @@ function App() {
   const [currentStep, setCurrentStep] = useState(0);
   const [currentConfigIndex, setCurrentConfigIndex] = useState(0);
   const [showSessionRestore, setShowSessionRestore] = useState(false);
-  // ADICIONE ESTE CÓDIGO
+
   useEffect(() => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
     });
   }, [currentStep, currentConfigIndex]);
+
   const {
     cart,
     serviceType,
@@ -49,13 +50,6 @@ function App() {
       setShowSessionRestore(true);
     }
   }, [loadSession]);
-
-  const navigateToStep = (step: number) => {
-    setCurrentStep(step);
-    if (step === 1) {
-      clearSession();
-    }
-  };
 
   const handleServiceTypeSelect = (type: 'recorrente' | 'avulso') => {
     setServiceType(type);
@@ -108,7 +102,6 @@ function App() {
     switch (currentStep) {
       case 0:
         return <WelcomeStep onNext={() => setCurrentStep(1)} />;
-      
       case 1:
         return (
           <UserDataStep
@@ -118,7 +111,6 @@ function App() {
             onPrev={() => setCurrentStep(0)}
           />
         );
-      
       case 2:
         return (
           <ServiceTypeStep
@@ -126,7 +118,6 @@ function App() {
             onPrev={() => setCurrentStep(1)}
           />
         );
-      
       case 3:
         return (
           <CategorySelectionStep
@@ -141,7 +132,6 @@ function App() {
             onPrev={() => setCurrentStep(2)}
           />
         );
-      
       case 4:
         return (
           <ServiceConfigStep
@@ -158,7 +148,6 @@ function App() {
             showToast={showToast}
           />
         );
-      
       case 5:
         return (
           <FinalBudgetStep
@@ -177,27 +166,46 @@ function App() {
             showToast={showToast}
           />
         );
-      
       default:
         return <WelcomeStep onNext={() => setCurrentStep(1)} />;
     }
   };
 
+  const renderFooter = () => {
+    if (currentStep === 3) { // CategorySelectionStep
+      return (
+        <BudgetFooter
+          onPrev={() => setCurrentStep(2)}
+          onNext={() => {
+            setCurrentConfigIndex(0);
+            setCurrentStep(4);
+          }}
+          isNextDisabled={selectedCategories.length === 0}
+          nextLabel="Continuar"
+        />
+      );
+    }
+    if (currentStep === 4) { // ServiceConfigStep
+      const isLastStep = currentConfigIndex === selectedCategories.length - 1;
+      return (
+        <BudgetFooter
+          onPrev={handleConfigPrev}
+          onNext={handleConfigNext}
+          isNextDisabled={false}
+          nextLabel={isLastStep ? 'Ver Orçamento Final' : 'Próximo'}
+        />
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 font-inter">
-      <main className="container mx-auto px-6 lg:px-10 py-10 pb-32">
+      <main className="container mx-auto px-6 lg:px-10 py-10 pb-40">
         {renderCurrentStep()}
       </main>
 
-      {currentStep >= 3 && (
-        <BudgetFooter
-          totals={totals}
-          serviceType={serviceType as 'recorrente' | 'avulso'}
-          discountApplied={discountState.applied}
-          onViewBudget={() => setCurrentStep(5)}
-          formatCurrency={formatCurrency}
-        />
-      )}
+      {renderFooter()}
 
       <ToastContainer toasts={toasts} onRemove={removeToast} />
 
