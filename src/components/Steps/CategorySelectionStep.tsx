@@ -70,7 +70,7 @@ const CategorySelectionStep: React.FC<CategorySelectionStepProps> = ({
               </button>
 
               {isComingSoon ? (
-                <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl p-6 text-center">
+                <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-[1.3px] flex flex-col items-center justify-center rounded-xl p-6 text-center">
                   <div className="p-3 bg-gray-500/20 rounded-lg mb-4">
                     <Lock className="w-8 h-8 text-gray-400" />
                   </div>
@@ -79,7 +79,7 @@ const CategorySelectionStep: React.FC<CategorySelectionStepProps> = ({
                   </p>
                 </div>
               ) : !isAvailable && (
-                <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-xl p-6 text-center">
+                <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-[1.3px] flex flex-col items-center justify-center rounded-xl p-6 text-center">
                   <div className="p-3 bg-blue-500/20 rounded-lg mb-4">
                     <Lock className="w-8 h-8 text-blue-400" />
                   </div>
