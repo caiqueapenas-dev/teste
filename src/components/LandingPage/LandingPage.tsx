@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, Users2, Palette, Film, MousePointerClick, MapPin, MonitorSmartphone, ShieldCheck, Target, Rocket, Plus, Minus } from 'lucide-react';
+import { Menu, Users2, Palette, Film, MousePointerClick, MapPin, MonitorSmartphone, ShieldCheck, Target, Rocket, Plus, Minus, X as CloseIcon, PlayCircle } from 'lucide-react';
 
 // Componente para o Acordeão do FAQ
 const FaqItem = ({ question, answer }) => {
@@ -47,8 +47,8 @@ const StatsCarousel = () => {
             setTimeout(() => {
                 setCurrentIndex((prevIndex) => (prevIndex + 1) % stats.length);
                 setIsFading(false);
-            }, 500); // Meio segundo para o fade-out
-        }, 3000); // Muda a cada 3 segundos
+            }, 500);
+        }, 3000);
 
         return () => clearInterval(interval);
     }, [stats.length]);
@@ -65,14 +65,15 @@ const StatsCarousel = () => {
 const LandingPage: React.FC = () => {
     const [portfolioFilter, setPortfolioFilter] = useState('Todos');
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [selectedMedia, setSelectedMedia] = useState<{src: string, type: 'image' | 'video'} | null>(null);
 
+    // DADOS DO PORTFÓLIO ATUALIZADOS
     const portfolioItems = [
-        { category: 'Social Media', description: 'Gestão de Conteúdo para Clínica', image: '/portfolio-social-media.jpg' },
-        { category: 'Tráfego Pago', description: 'Campanha de Leads para Saúde', image: '/portfolio-trafego.jpg' },
-        { category: 'Google Meu Negócio', description: 'Otimização de Perfil Local', image: '/portfolio-gmn.jpg' },
-        { category: 'Artes Gráficas', description: 'Identidade Visual para Nutricionista', image: '/portfolio-artes.jpg' },
-        { category: 'Edição de Vídeo', description: 'Reels de Alto Impacto', image: '/portfolio-video.jpg' },
-        { category: 'Social Media', description: 'Estratégia para Fisioterapeuta', image: '/portfolio-social-media-2.jpg' },
+        { category: 'Social Media', description: 'Gestão de conteúdo para clínica', type: 'image', src: '/social-media.png' },
+        { category: 'Tráfego Pago', description: 'Campanha de leads para saúde', type: 'image', src: '/trafego-pago.png' },
+        { category: 'Google Meu Negócio', description: 'Sua empresa no topo do Google', type: 'image', src: '/google.png' },
+        { category: 'Artes Gráficas', description: 'Identidade visual para clínica e médicos', type: 'image', src: '/portfolio-desktop.jpg' },
+        { category: 'Edição de Vídeo', description: 'Reels de alto impacto', type: 'video', src: '/video.mp4' },
     ];
 
     const portfolioCategories = ['Todos', 'Social Media', 'Tráfego Pago', 'Google Meu Negócio', 'Artes Gráficas', 'Edição de Vídeo'];
@@ -81,7 +82,6 @@ const LandingPage: React.FC = () => {
         ? portfolioItems
         : portfolioItems.filter(item => item.category === portfolioFilter);
 
-    // Links úteis para fácil manutenção
     const budgetLink = "/marketing-budget";
     const whatsappLink = "https://wa.me/5575981865878?text=Olá,%20Carlos!%20Vim%20pelo%20site%20e%20gostaria%20de%20um%20orçamento.";
 
@@ -89,9 +89,18 @@ const LandingPage: React.FC = () => {
         setIsMenuOpen(false);
     };
 
+    const openMedia = (src: string, type: 'image' | 'video') => {
+        setSelectedMedia({ src, type });
+        document.body.style.overflow = 'hidden';
+    };
+
+    const closeMedia = () => {
+        setSelectedMedia(null);
+        document.body.style.overflow = 'auto';
+    };
+
     return (
         <div className="bg-[#e1e5f2]">
-            {/* Cabeçalho */}
             <header className="bg-[#022b3a] text-[#ffffff] shadow-lg sticky top-0 z-50">
                 <div className="container mx-auto px-6 py-4 flex justify-between items-center">
                     <a href="#home" className="text-2xl font-bold">Carlos Henrique</a>
@@ -109,7 +118,6 @@ const LandingPage: React.FC = () => {
                         <Menu size={24} />
                     </button>
                 </div>
-                {/* Menu Mobile */}
                 <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden bg-[#022b3a] px-6 pb-4`}>
                     <a href="#servicos" onClick={handleMenuLinkClick} className="block py-2 text-white hover:text-[#0496ff]">Serviços</a>
                     <a href="#portfolio" onClick={handleMenuLinkClick} className="block py-2 text-white hover:text-[#0496ff]">Portfólio</a>
@@ -123,7 +131,6 @@ const LandingPage: React.FC = () => {
             </header>
 
             <main>
-                {/* Seção Hero */}
                 <section id="home" className="bg-[#022b3a] text-white py-20 md:py-32">
                     <div className="container mx-auto px-6 text-center">
                         <h2 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4">Encontre o especialista certo para o seu marketing digital</h2>
@@ -134,14 +141,12 @@ const LandingPage: React.FC = () => {
                     </div>
                 </section>
                 
-                {/* Seção de Confiança com Carrossel */}
                 <section id="confianca" className="bg-white py-8">
                     <div className="container mx-auto px-6 h-16 flex justify-center items-center">
                         <StatsCarousel />
                     </div>
                 </section>
 
-                {/* Seção de Serviços */}
                 <section id="servicos" className="py-20 bg-white">
                     <div className="container mx-auto px-6">
                         <div className="text-center mb-16">
@@ -159,7 +164,6 @@ const LandingPage: React.FC = () => {
                     </div>
                 </section>
                 
-                {/* Seção Portfólio com Galeria */}
                 <section id="portfolio" className="py-20 bg-[#e1e5f2]">
                     <div className="container mx-auto px-6">
                         <div className="text-center mb-12">
@@ -186,8 +190,17 @@ const LandingPage: React.FC = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredPortfolio.map((item, index) => (
                                 <div key={index} className="group bg-white rounded-lg shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-                                    <div className="overflow-hidden h-56">
-                                        <img src={item.image} alt={item.description} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                    <div className="overflow-hidden h-64 cursor-pointer relative" onClick={() => openMedia(item.src, item.type)}>
+                                        {item.type === 'image' ? (
+                                            <img src={item.src} alt={item.description} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                        ) : (
+                                            <>
+                                                <video src={item.src} muted loop playsInline className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center transition-opacity opacity-0 group-hover:opacity-100">
+                                                    <PlayCircle size={64} className="text-white" />
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                     <div className="p-5">
                                         <span className="text-xs font-semibold bg-[#a5be00] text-[#022b3a] py-1 px-3 rounded-full">{item.category}</span>
@@ -199,7 +212,6 @@ const LandingPage: React.FC = () => {
                     </div>
                 </section>
                 
-                {/* Seção Diferenciais */}
                 <section id="diferenciais" className="py-20 bg-white">
                     <div className="container mx-auto px-6">
                         <div className="text-center mb-16">
@@ -258,19 +270,32 @@ const LandingPage: React.FC = () => {
                     </div>
                 </section>
 
-                {/* Seção Final de CTA */}
                 <section id="contato" className="bg-[#022b3a] text-white py-20">
                     <div className="container mx-auto px-6 text-center">
                         <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Pronto para ter um Marketing que Vende?</h2>
                         <p className="text-lg text-[#e1e5f2] max-w-2xl mx-auto mb-8">Chega de estratégias que não funcionam. Fale comigo, sem compromisso, e vamos desenhar um plano de ação para o seu negócio se destacar. Meu atendimento é de Segunda a Sexta, das 9h às 17h.</p>
-                        <Link to={budgetLink} className="bg-[#a5be00] text-[#022b3a] font-bold py-4 px-10 rounded-lg text-lg inline-block secondary-cta-button">
-                            Ver Orçamento Personalizado
-                        </Link>
+                        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="bg-[#a5be00] text-[#022b3a] font-bold py-4 px-10 rounded-lg text-lg inline-block secondary-cta-button">
+                            Falar com um Especialista Agora
+                        </a>
                     </div>
                 </section>
             </main>
 
-            {/* Rodapé */}
+            {selectedMedia && (
+                <div className="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-[100] p-4" onClick={closeMedia}>
+                    <button onClick={closeMedia} className="absolute top-4 right-4 text-white hover:text-gray-300">
+                        <CloseIcon size={32} />
+                    </button>
+                    <div className="relative" onClick={(e) => e.stopPropagation()}>
+                        {selectedMedia.type === 'image' ? (
+                            <img src={selectedMedia.src} alt="Visualização Ampliada" className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg" />
+                        ) : (
+                            <video src={selectedMedia.src} controls autoPlay className="max-w-[90vw] max-h-[90vh] rounded-lg" />
+                        )}
+                    </div>
+                </div>
+            )}
+
             <footer className="bg-[#022b3a] border-t border-gray-700 text-[#e1e5f2] py-8">
                 <div className="container mx-auto px-6 text-center">
                     <p>&copy; {new Date().getFullYear()} Carlos Henrique. Todos os direitos reservados.</p>
