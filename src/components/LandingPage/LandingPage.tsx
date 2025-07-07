@@ -34,7 +34,7 @@ const StatsCarousel = () => {
     const stats = [
         { value: "+26", label: "Clientes Atendidos" },
         { value: "+R$70 mil", label: "Gerenciados em Anúncios" },
-        { value: "100%", label: "Conforme as Normas (CRM/CRN)" },
+        { value: "100%", label: "Conforme as Normas (CFM, CRN, CRO, etc.)" },
         { value: "Aluno", label: "Pedro Sobral (Subido)" }
     ];
 
@@ -145,6 +145,11 @@ const LandingPage: React.FC = () => {
                     <div className="container mx-auto px-6 h-16 flex justify-center items-center">
                         <StatsCarousel />
                     </div>
+                    <div className="text-center mt-12">
+                        <Link to={budgetLink} className="bg-[#0496ff] text-white font-bold py-3 px-8 rounded-lg text-lg inline-block cta-button">
+                            Personalize os serviços e veja o preço
+                        </Link>
+                    </div>
                 </section>
 
                 <section id="servicos" className="py-20 bg-white">
@@ -161,6 +166,11 @@ const LandingPage: React.FC = () => {
                             <div className="bg-white p-8 rounded-lg shadow-lg text-center border-t-4 border-[#a5be00] service-card transition-all duration-300"><div className="flex items-center justify-center h-16 w-16 rounded-full bg-[#e1e5f2] mx-auto mb-5"><MapPin size={32} strokeWidth={2} className="text-[#022b3a]" /></div><h4 className="text-2xl font-bold text-[#022b3a] mb-3">Google Meu Negócio</h4><p className="text-gray-700 font-semibold mb-2 text-left">Ideal para quem:</p><ul className="text-sm text-gray-600 list-disc list-inside text-left space-y-1"><li>Está invisível nas buscas locais</li><li>Tem um perfil desatualizado ou mal otimizado</li><li>Perde clientes para concorrentes próximos</li></ul></div>
                             <div className="bg-white p-8 rounded-lg shadow-lg text-center border-t-4 border-[#a5be00] service-card transition-all duration-300"><div className="flex items-center justify-center h-16 w-16 rounded-full bg-[#e1e5f2] mx-auto mb-5"><MonitorSmartphone size={32} strokeWidth={2} className="text-[#022b3a]" /></div><h4 className="text-2xl font-bold text-[#022b3a] mb-3">Criação de Sites</h4><p className="text-gray-700">Desenvolvemos sites e landing pages de alta conversão para fortalecer sua presença online e centralizar suas vendas.</p></div>
                         </div>
+                    </div>
+                    <div className="text-center mt-12">
+                        <Link to={budgetLink} className="bg-[#0496ff] text-white font-bold py-3 px-8 rounded-lg text-lg inline-block cta-button">
+                            Veja o preço em poucos cliques
+                        </Link>
                     </div>
                 </section>
                 
@@ -210,6 +220,11 @@ const LandingPage: React.FC = () => {
                             ))}
                         </div>
                     </div>
+                    <div className="text-center mt-12">
+                        <Link to={budgetLink} className="bg-[#0496ff] text-white font-bold py-3 px-8 rounded-lg text-lg inline-block cta-button">
+                            Faça você mesmo o orçamento
+                        </Link>
+                    </div>
                 </section>
                 
                 <section id="diferenciais" className="py-20 bg-white">
@@ -220,9 +235,14 @@ const LandingPage: React.FC = () => {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
                             <div className="bg-white p-6 rounded-lg shadow-md"><h4 className="font-bold text-xl text-[#022b3a] mb-2">Parceria Estratégica</h4><p className="text-gray-700">Você não terá um 'gerente de contas'. Você terá a mim, Carlos, um estrategista que mergulha no seu negócio, entende sua história e respeita seu tempo e investimento.</p></div>
-                            <div className="bg-white p-6 rounded-lg shadow-md"><h4 className="font-bold text-xl text-[#022b3a] mb-2">Conformidade e Ética</h4><p className="text-gray-700">Atuo com total conhecimento das normas de publicidade para a área da saúde (CRM, CRN, etc). Sua comunicação estará sempre ética, profissional e segura.</p></div>
+                            <div className="bg-white p-6 rounded-lg shadow-md"><h4 className="font-bold text-xl text-[#022b3a] mb-2">Conformidade e Ética</h4><p className="text-gray-700">Atuo com total conhecimento das normas de publicidade para a área da saúde (CFM, CRO,  CFP, CRN, etc). Sua comunicação estará sempre ética, profissional e segura.</p></div>
                             <div className="bg-white p-6 rounded-lg shadow-md"><h4 className="font-bold text-xl text-[#022b3a] mb-2">Eficiência e Organização</h4><p className="text-gray-700">Minha filosofia é clara: organização gera produtividade. Otimizamos processos e eliminamos reuniões desnecessárias, para que seu tempo seja usado no que realmente importa.</p></div>
                         </div>
+                    </div>
+                    <div className="text-center mt-12">
+                        <Link to={budgetLink} className="bg-[#0496ff] text-white font-bold py-3 px-8 rounded-lg text-lg inline-block cta-button">
+                            Descubra o valor na hora
+                        </Link>
                     </div>
                 </section>
 
@@ -237,6 +257,11 @@ const LandingPage: React.FC = () => {
                             <div className="text-center"><div className="flex items-center justify-center h-20 w-20 rounded-full bg-[#a5be00] mx-auto mb-5"><Target size={40} className="text-[#022b3a]" /></div><h4 className="text-2xl font-bold mb-3">Meio de Campo: Distribuição Inteligente</h4><p className="text-[#e1e5f2]">Com tráfego pago estratégico (Meta Ads), distribuímos seu conteúdo para as pessoas certas, no momento certo, garantindo que sua mensagem chegue a quem realmente importa.</p></div>
                             <div className="text-center"><div className="flex items-center justify-center h-20 w-20 rounded-full bg-[#a5be00] mx-auto mb-5"><Rocket size={40} className="text-[#022b3a]" /></div><h4 className="text-2xl font-bold mb-3">Ataque: Conversão e Vendas</h4><p className="text-[#e1e5f2]">No ataque, convertemos a visibilidade em ação. Usando anúncios "camuflados" e chamadas eficazes, transformamos seguidores e visitantes em pacientes agendados.</p></div>
                         </div>
+                    </div>
+                    <div className="text-center mt-12">
+                        <Link to={budgetLink} className="bg-[#0496ff] text-white font-bold py-3 px-8 rounded-lg text-lg inline-block cta-button">
+                            Monte seu orçamento em segundos
+                        </Link>
                     </div>
                 </section>
                 <section id="sobre" className="py-20 bg-white">
@@ -253,6 +278,11 @@ const LandingPage: React.FC = () => {
                             </div>
                         </div>
                     </div>
+                    <div className="text-center mt-12">
+                        <Link to={budgetLink} className="bg-[#0496ff] text-white font-bold py-3 px-8 rounded-lg text-lg inline-block cta-button">
+                            Simule o preço online
+                        </Link>
+                    </div>
                 </section>
                 <section id="faq" className="py-20 bg-white">
                     <div className="container mx-auto px-6 max-w-4xl">
@@ -268,17 +298,14 @@ const LandingPage: React.FC = () => {
                             <FaqItem question="O serviço inclui a criação dos textos e das artes?" answer="Sim. Meu serviço de Social Media é completo. Ele inclui todo o processo: da estratégia e planejamento à criação dos textos (copywriting) e do design dos posts, sempre alinhado com a identidade visual da sua marca."/>
                          </div>
                     </div>
-                </section>
-
-                <section id="contato" className="bg-[#022b3a] text-white py-20">
-                    <div className="container mx-auto px-6 text-center">
-                        <h2 className="text-3xl md:text-4xl font-extrabold mb-4">Pronto para ter um Marketing que Vende?</h2>
-                        <p className="text-lg text-[#e1e5f2] max-w-2xl mx-auto mb-8">Chega de estratégias que não funcionam. Fale comigo, sem compromisso, e vamos desenhar um plano de ação para o seu negócio se destacar. Meu atendimento é de Segunda a Sexta, das 9h às 17h.</p>
-                        <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="bg-[#a5be00] text-[#022b3a] font-bold py-4 px-10 rounded-lg text-lg inline-block secondary-cta-button">
-                            Falar com um Especialista Agora
-                        </a>
+                    <div className="text-center mt-12">
+                        <Link to={budgetLink} className="bg-[#0496ff] text-white font-bold py-3 px-8 rounded-lg text-lg inline-block cta-button">
+                            Calcule seu orçamento agora
+                        </Link>
                     </div>
                 </section>
+
+                
             </main>
 
             {selectedMedia && (
