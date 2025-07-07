@@ -44,17 +44,49 @@ const handlePhoneChange = (value: string) => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // **AQUI VOCÊ ENVIARIA OS DADOS PARA SEU BANCO DE DADOS **
-    // Exemplo:
-    // sendToDatabase(formData);
-    console.log("Dados capturados:", formData);
-    
-    if (isValid) {
-      onNext();
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  // Primeiro, valida se o formulário está preenchido
+  if (!isValid) {
+    // Opcional: você pode adicionar um toast aqui para avisar o usuário
+    return;
+  }
+
+  try {
+    // A URL da sua API. Em ambiente de desenvolvimento, aponta para localhost.
+    // Em produção (após o deploy), '/api/save-lead' usará o mesmo domínio do site.
+    const apiUrl = import.meta.env.DEV 
+      ? 'http://localhost:3001/api/save-lead' 
+      : '/api/save-lead';
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (!response.ok) {
+      // Se a API retornar um erro (ex: 500), loga o erro, mas continua.
+      const errorResult = await response.json();
+      console.error('Falha ao salvar o lead, mas continuando o fluxo:', errorResult.message);
+    } else {
+      // Se a API retornar sucesso, loga a mensagem de sucesso.
+      const successResult = await response.json();
+      console.log('Lead salvo com sucesso!', successResult.message);
     }
-  };
+
+  } catch (error) {
+    // Se houver um erro de rede (ex: API offline), loga e continua.
+    console.error('Erro de rede ao tentar salvar o lead. Verifique se a API está rodando.', error);
+  } finally {
+    // INDEPENDENTE do resultado da API, avança para o próximo passo.
+    // A captura do lead não deve impedir o usuário de montar o orçamento.
+    onNext();
+  }
+};
 
   const isValid = formData.name && formData.email && formData.phone && formData.field && formData.lgpdAccepted;
 
