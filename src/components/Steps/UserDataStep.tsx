@@ -56,9 +56,7 @@ const handlePhoneChange = (value: string) => {
   try {
     // A URL da sua API. Em ambiente de desenvolvimento, aponta para localhost.
     // Em produção (após o deploy), '/api/save-lead' usará o mesmo domínio do site.
-    const apiUrl = import.meta.env.DEV 
-      ? 'http://localhost:3001/api/save-lead' 
-      : '/api/save-lead';
+    const apiUrl = '/api/save-lead.php';
 
     const response = await fetch(apiUrl, {
       method: 'POST',
