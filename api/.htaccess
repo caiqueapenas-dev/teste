@@ -1,0 +1,5 @@
+# Proteger esta pasta
+AuthType Basic
+AuthName "Acesso Restrito"
+AuthUserFile /home/u849382461/domains/carloshenriquesilva.com/public_html/api/.htpasswd
+Require valid-user
