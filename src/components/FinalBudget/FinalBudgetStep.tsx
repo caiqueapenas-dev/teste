@@ -78,19 +78,29 @@ const FinalBudgetStep: React.FC<FinalBudgetStepProps> = ({
     }
     return message;
   }
-
-  const saveBudgetToDatabase = async () => {
+const saveBudgetToDatabase = async () => {
     const budgetDetails = formatBudgetDetails();
     try {
-      await fetch('/api/save-budget.php', {
+      const response = await fetch('/api/save-budget.php', { 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email: userData.email, budgetDetails }),
       });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Resposta da API:', result.message);
+      } else {
+        const errorResult = await response.json();
+        console.error('Falha ao salvar o orçamento:', errorResult.message);
+        console.error('Detalhes do erro do servidor:', errorResult.error);
+        showToast(`Erro ao salvar: ${errorResult.message || 'Verifique o console'}`, 'error');
+      }
     } catch (error) {
-      console.error('Erro ao salvar o orçamento:', error);
+      console.error('Erro de rede ou ao conectar com a API:', error);
+      showToast('Não foi possível conectar ao servidor. Verifique o console.', 'error');
     }
   };
 
@@ -98,7 +108,7 @@ const FinalBudgetStep: React.FC<FinalBudgetStepProps> = ({
     if (!totals.cartIsEmpty) {
       saveBudgetToDatabase();
     }
-  }, []);
+  }, []); // O array vazio garante que isso rode apenas uma vez, quando o componente é montado
 
 
   const sendToWhatsApp = () => {
