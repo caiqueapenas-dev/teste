@@ -10,7 +10,7 @@ if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
 
 // Credenciais corretas (substitua pelas suas)
 $correct_username = 'admin';
-$correct_password = 'senha123'; // Troque por uma senha forte
+$correct_password = '$r0ot_PHP/h0m3'; // Troque por uma senha forte
 
 $error_message = '';
 
