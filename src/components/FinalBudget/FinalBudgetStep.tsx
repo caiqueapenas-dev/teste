@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft, MessageCircle, X } from 'lucide-react';
 import { Cart, UserData, Totals } from '../../types';
 import FinalCartItem from './FinalCartItem';
@@ -38,16 +38,15 @@ const FinalBudgetStep: React.FC<FinalBudgetStepProps> = ({
 }) => {
   const [showDiscountModal, setShowDiscountModal] = useState(false);
 
-  const sendToWhatsApp = () => {
-    let message = `Olá, Carlos! Gostaria de um orçamento.\n\n`;
-    message += `*DADOS DO CLIENTE:*\n`;
+  const formatBudgetDetails = () => {
+    let message = `*DADOS DO CLIENTE:*\n`;
     message += `Nome: ${userData.name || 'Não informado'}\n`;
     message += `E-mail: ${userData.email || 'Não informado'}\n`;
     message += `Celular: ${userData.phone || 'Não informado'}\n`;
     message += `Instagram: ${userData.instagram || 'Não informado'}\n`;
     message += `Área de Atuação: ${userData.field || 'Não informado'}\n\n`;
     message += `*SERVIÇOS SOLICITADOS (${serviceType === 'recorrente' ? 'Plano Recorrente' : 'Serviço Avulso'}):*\n`;
-    
+
     Object.entries(cart).sort((a,b) => a[0].localeCompare(b[0])).forEach(([id, value]) => {
       let service, itemTotal, name;
       if (id === 'trafego_investimento_custom') {
@@ -61,7 +60,7 @@ const FinalBudgetStep: React.FC<FinalBudgetStepProps> = ({
       }
       message += `- ${name}: ${formatCurrency(itemTotal)}\n`;
     });
-    
+
     message += `\n*RESUMO DO ORÇAMENTO:*\n`;
     if (discountApplied) {
       const discountTerm = serviceType === 'recorrente' ? 'no valor total do primeiro mês.' : 'no valor total.';
@@ -73,11 +72,37 @@ const FinalBudgetStep: React.FC<FinalBudgetStepProps> = ({
     } else {
       message += `*Pagamento Inicial:* ${formatCurrency(totals.originalFirstMonthPayment)}\n`;
     }
-    
+
     if (serviceType === 'recorrente' && totals.monthlyTotal > 0) {
       message += `*Mensalidade (a partir do 2º mês):* ${formatCurrency(totals.monthlyTotal)}`;
     }
-    
+    return message;
+  }
+
+  const saveBudgetToDatabase = async () => {
+    const budgetDetails = formatBudgetDetails();
+    try {
+      await fetch('/api/save-budget.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: userData.email, budgetDetails }),
+      });
+    } catch (error) {
+      console.error('Erro ao salvar o orçamento:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (!totals.cartIsEmpty) {
+      saveBudgetToDatabase();
+    }
+  }, []);
+
+
+  const sendToWhatsApp = () => {
+    const message = formatBudgetDetails();
     const whatsappUrl = `https://wa.me/5575981865878?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
