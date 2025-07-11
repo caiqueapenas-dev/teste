@@ -111,7 +111,7 @@ const LandingPage: React.FC = () => {
                     </div>
                 </section>
                 
-                <section id="confianca" className="bg-white py-8">
+                <section id="confianca" className="bg-slate-50 py-8">
                     <div className="container mx-auto px-6 h-16 flex justify-center items-center">
                         <StatsCarousel />
                     </div>
@@ -144,7 +144,7 @@ const LandingPage: React.FC = () => {
                     </div>
                 </section>
                 
-                <section id="diferenciais" className="py-20 bg-white">
+                <section id="diferenciais" className="py-20 bg-slate-50">
                     <div className="container mx-auto px-6">
                         <div className="text-center mb-16">
                             <h3 className="text-3xl md:text-4xl font-bold text-[#022b3a]">Chega de ser apenas mais um número.</h3>
@@ -203,7 +203,7 @@ const LandingPage: React.FC = () => {
                     </div>
                 </section>
 
-                <section id="faq" className="py-20 bg-white">
+                <section id="faq" className="py-20 bg-slate-50">
                     <div className="container mx-auto px-6 max-w-4xl">
                         <div className="text-center mb-12">
                              <h3 className="text-3xl md:text-4xl font-bold text-[#022b3a]">Ainda tem Dúvidas?</h3>
