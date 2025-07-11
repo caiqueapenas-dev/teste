@@ -229,6 +229,15 @@ const LandingPage: React.FC = () => {
                 <div className="container mx-auto px-6 text-center">
                     <p>&copy; {new Date().getFullYear()} Carlos Henrique. Todos os direitos reservados.</p>
                     <p className="text-sm mt-2">Marketing Digital de alta performance para a área da saúde.</p>
+                    <div className="mt-4">
+                        <Link to="/politica-de-privacidade" className="text-sm text-slate-400 hover:text-white transition-colors duration-300 mx-2">
+                            Política de Privacidade
+                        </Link>
+                        <span className="text-slate-500">|</span>
+                        <Link to="/termos-de-uso" className="text-sm text-slate-400 hover:text-white transition-colors duration-300 mx-2">
+                            Termos de Uso
+                        </Link>
+                    </div>
                 </div>
             </footer>
         </div>

@@ -1,6 +1,14 @@
 ﻿├── .bolt
 │   ├── config.json
 │   └── prompt
+├── .old_midia
+│   ├── google.png
+│   ├── IMG_3875.jpg
+│   ├── portfolio-desktop.jpg
+│   ├── portfolio-mobile.jpg
+│   ├── social-media.png
+│   ├── trafego-pago.png
+│   └── video.mp4
 ├── api
 │   ├── .htaccess
 │   ├── .htpasswd
@@ -13,13 +21,7 @@
 │   ├── save-lead.php
 │   └── server.cjs
 ├── public
-│   ├── google.png
-│   ├── IMG_3875.jpg
-│   ├── portfolio-desktop.jpg
-│   ├── portfolio-mobile.jpg
-│   ├── social-media.png
-│   ├── trafego-pago.png
-│   └── video.mp4
+│   └── IMG_3875.jpg
 ├── src
 │   ├── components
 │   │   ├── BudgetSummary
@@ -62,7 +64,6 @@
 │   └── vite-env.d.ts
 ├── .gitignore
 ├── arvore.txt
-├── criar_projeto.bat
 ├── eslint.config.js
 ├── index.html
 ├── package-lock.json

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useCalculator } from '../hooks/useCalculator';
 import { useToast } from '../hooks/useToast';
 import WelcomeStep from '../components/Steps/WelcomeStep';
@@ -11,10 +12,13 @@ import BudgetFooter from '../components/BudgetSummary/BudgetFooter';
 import ToastContainer from '../components/Toast/ToastContainer';
 import SessionRestoreModal from '../components/SessionRestore/SessionRestoreModal';
 
-const MarketingBudget: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState(0);
+// O componente agora aceita a prop 'initialStep'
+const MarketingBudget: React.FC<{ initialStep?: number }> = ({ initialStep = 0 }) => {
+  // O estado inicial usa a prop ou o valor padrão 0
+  const [currentStep, setCurrentStep] = useState(initialStep);
   const [currentConfigIndex, setCurrentConfigIndex] = useState(0);
   const [showSessionRestore, setShowSessionRestore] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo({
@@ -45,11 +49,19 @@ const MarketingBudget: React.FC = () => {
   const { toasts, showToast, removeToast } = useToast();
 
   useEffect(() => {
-    const hasSession = loadSession();
-    if (hasSession) {
-      setShowSessionRestore(true);
+    // Só tenta restaurar a sessão se estiver na página inicial do orçamento
+    if (initialStep === 0) {
+      const hasSession = loadSession();
+      if (hasSession) {
+        setShowSessionRestore(true);
+      }
     }
-  }, [loadSession]);
+  }, [loadSession, initialStep]);
+
+  const handleUserDataNext = () => {
+    // A única responsabilidade agora é navegar. O App.tsx cuida do resto.
+    navigate('/agradecimento');
+  };
 
   const handleServiceTypeSelect = (type: 'recorrente' | 'avulso') => {
     setServiceType(type);
@@ -79,7 +91,8 @@ const MarketingBudget: React.FC = () => {
 
   const handleCancelOrder = () => {
     clearSession();
-    setCurrentStep(0);
+    // Volta para a página inicial
+    navigate('/marketing-budget');
   };
 
   const handleSessionRestore = () => {
@@ -96,6 +109,7 @@ const MarketingBudget: React.FC = () => {
     clearSession();
     setShowSessionRestore(false);
     setCurrentStep(0);
+    navigate('/marketing-budget');
   };
 
   const renderCurrentStep = () => {
@@ -107,7 +121,8 @@ const MarketingBudget: React.FC = () => {
           <UserDataStep
             userData={userData}
             onUserDataChange={setUserData}
-            onNext={() => setCurrentStep(2)}
+            // Aqui passamos a nova função de navegação
+            onNext={handleUserDataNext}
             onPrev={() => setCurrentStep(0)}
           />
         );
@@ -115,7 +130,8 @@ const MarketingBudget: React.FC = () => {
         return (
           <ServiceTypeStep
             onServiceTypeSelect={handleServiceTypeSelect}
-            onPrev={() => setCurrentStep(1)}
+            // Se o usuário voltar, ele deve ir para a página inicial do orçamento
+            onPrev={() => navigate('/marketing-budget')}
           />
         );
       case 3:
@@ -170,9 +186,9 @@ const MarketingBudget: React.FC = () => {
         return <WelcomeStep onNext={() => setCurrentStep(1)} />;
     }
   };
-
+  
   const renderFooter = () => {
-    if (currentStep === 3) { // CategorySelectionStep
+    if (currentStep === 3) {
       return (
         <BudgetFooter
           onPrev={() => setCurrentStep(2)}
@@ -185,7 +201,7 @@ const MarketingBudget: React.FC = () => {
         />
       );
     }
-    if (currentStep === 4) { // ServiceConfigStep
+    if (currentStep === 4) {
       const isLastStep = currentConfigIndex === selectedCategories.length - 1;
       return (
         <BudgetFooter
