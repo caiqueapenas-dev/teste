@@ -22,10 +22,10 @@ const ServiceTypeStep: React.FC<ServiceTypeStepProps> = ({ onServiceTypeSelect, 
             <div className="p-3 bg-blue-500/20 rounded-lg group-hover:bg-blue-500/30 transition-colors">
               <RefreshCw className="w-8 h-8 text-blue-400" />
             </div>
-            <h3 className="text-2xl font-bold text-white">Serviço Recorrente</h3>
+            <h3 className="text-2xl font-bold text-white">Serviço recorrente</h3>
           </div>
           <p className="text-slate-400 leading-relaxed">
-            Ideal para quem busca um plano de marketing contínuo, com acompanhamento e otimização mensal.
+            Ideal para quem busca um plano de marketing <b>contínuo</b>, com acompanhamento e otimização mensal.
           </p>
         </button>
 
@@ -37,7 +37,7 @@ const ServiceTypeStep: React.FC<ServiceTypeStepProps> = ({ onServiceTypeSelect, 
             <div className="p-3 bg-orange-500/20 rounded-lg group-hover:bg-orange-500/30 transition-colors">
               <Zap className="w-8 h-8 text-orange-400" />
             </div>
-            <h3 className="text-2xl font-bold text-white">Serviço Avulso</h3>
+            <h3 className="text-2xl font-bold text-white">Serviço avulso</h3>
           </div>
           <p className="text-slate-400 leading-relaxed">
             Perfeito para projetos pontuais, como a criação de artes, edição de vídeos ou a configuração inicial de uma ferramenta.

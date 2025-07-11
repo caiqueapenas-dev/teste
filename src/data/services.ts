@@ -2,8 +2,8 @@ import { ServiceCategory } from '../types';
 
 export const services: ServiceCategory[] = [
   {
-    category: 'Social Media',
-    description: 'Crie conexões com sua audiência e fortaleça sua marca com um gerenciamento estratégico e consistente.',
+    category: 'Social media',
+    description: 'Crie conexões com sua audiência e fortaleça sua marca com um gerenciamento estratégico e consistente das suas redes sociais.',
     items: [
       {
         id: 'sm_publicacao',
@@ -50,7 +50,7 @@ export const services: ServiceCategory[] = [
     ]
   },
   {
-    category: 'Criação de Artes Gráficas',
+    category: 'Criação de artes gráficas',
     description: 'Capture a atenção com um design que fala pelo seu negócio e diferencia sua marca no mercado.',
     items: [
       {
@@ -64,41 +64,41 @@ export const services: ServiceCategory[] = [
         deliverables: [
           'Design de até 10 slides',
           'Uso de identidade visual da marca',
-          'Entrega em formato PNG/JPG'
+          'Entrega em formato PNG'
         ]
       },
       {
         id: 'card_feed',
-        name: 'Post para Feed',
+        name: 'Post para feed',
         price: 40,
         type: 'quantity',
         billing: 'once',
         description: 'Criação de arte para post de imagem única no feed.',
         unit: '/unidade',
         deliverables: [
-          'Design de imagem única (1080x1080)',
+          'Design de imagem única (1080x1350) vertical',
           'Uso de identidade visual da marca',
-          'Entrega em formato PNG/JPG'
+          'Entrega em formato PNG'
         ]
       },
       {
         id: 'card_story',
-        name: 'Post para Story',
+        name: 'Post para story',
         price: 40,
         type: 'quantity',
         billing: 'once',
-        description: 'Criação de arte para stories, ideal para avisos e comunicados.',
+        description: 'Criação de arte para stories, ideal para avisos, agendas e comunicados.',
         unit: '/unidade',
         deliverables: [
-          'Design de imagem única (1080x1920)',
+          'Design de imagem única (1080x1920) story',
           'Uso de identidade visual da marca',
-          'Entrega em formato PNG/JPG'
+          'Entrega em formato PNG'
         ]
       }
     ]
   },
   {
-    category: 'Edição de Vídeo',
+    category: 'Edição de vídeo',
     description: 'Converta vídeos brutos em histórias que engajam e prendem a atenção do início ao fim.',
     items: [
       {
@@ -154,14 +154,14 @@ export const services: ServiceCategory[] = [
         deliverables: [
           'Tudo do plano anterior',
           'Múltiplos ângulos de câmera (se fornecido)',
-          'Qualidade de exportação máxima'
+          'Qualidade de exportação em até 4k'
         ]
       }
     ]
   },
   {
-    category: 'Tráfego Pago',
-    description: 'Alcance as pessoas certas no momento certo com campanhas otimizadas para gerar leads e vendas.',
+    category: 'Tráfego pago',
+    description: 'Alcance, dentro da sua cidade, as pessoas certas no momento certo com campanhas otimizadas para gerar leads, visibilidade e vendas.',
     items: [
       {
         id: 'trafego_gestao',
@@ -181,12 +181,12 @@ export const services: ServiceCategory[] = [
     ]
   },
   {
-     category: 'Google Meu Negócio',
-     description: 'Seja a primeira opção para clientes na sua região e domine as buscas locais.',
+     category: 'Google Meu Negócio (GMN)',
+     description: 'Apareça no topo das pesquisas do Google, seja a primeira opção para clientes na sua região e domine as buscas locais.',
      items: [
        {
          id: 'gmn_setup',
-         name: 'Configuração Inicial do GMN',
+         name: 'Configuração inicial do GMN',
          price: 997,
          type: 'fixed',
          billing: 'once',
@@ -200,7 +200,7 @@ export const services: ServiceCategory[] = [
        },
        {
          id: 'gmn_mensal',
-         name: 'Gestão Mensal do GMN',
+         name: 'Gestão mensal do GMN',
          price: 349,
          type: 'fixed',
          billing: 'monthly',
@@ -215,12 +215,12 @@ export const services: ServiceCategory[] = [
     ]
   },
   {
-    category: 'Criação de Site',
+    category: 'Criação de site',
     description: 'Desenvolvemos sites institucionais e landing pages de alta conversão para fortalecer sua presença online.',
     items: [
       {
         id: 'site_institucional',
-        name: 'Criação de Site',
+        name: 'Criação de site',
         price: 0,
         type: 'fixed',
         billing: 'once',

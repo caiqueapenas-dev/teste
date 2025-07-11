@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, MessageCircle, X } from 'lucide-react';
+import { ArrowLeft, MessageCircle, X, Minus, Plus } from 'lucide-react';
 import { Cart, UserData, Totals } from '../../types';
 import FinalCartItem from './FinalCartItem';
 import DiscountModal from '../Modals/DiscountModal';
@@ -108,8 +108,7 @@ const saveBudgetToDatabase = async () => {
     if (!totals.cartIsEmpty) {
       saveBudgetToDatabase();
     }
-  }, []); // O array vazio garante que isso rode apenas uma vez, quando o componente é montado
-
+  }, []);
 
   const sendToWhatsApp = () => {
     const message = formatBudgetDetails();
@@ -133,7 +132,6 @@ const saveBudgetToDatabase = async () => {
     onCancelOrder();
   };
 
-  // Separate items by billing type
   const oneTimeItems: any[] = [];
   const recurringItems: any[] = [];
 
@@ -230,6 +228,44 @@ const saveBudgetToDatabase = async () => {
             </div>
           )}
         </div>
+
+        {(() => {
+          const quantityServiceIds = services
+            .filter(cat => cat.category === 'Criação de Artes Gráficas' || cat.category === 'Edição de Vídeo')
+            .flatMap(cat => cat.items)
+            .map(item => item.id);
+
+          const unselectedItems = quantityServiceIds.filter(id => !(cart[id] > 0));
+
+          if (serviceType === 'recorrente' && unselectedItems.length > 0) {
+            return (
+              <div className="my-6">
+                <h4 className="text-lg font-bold text-slate-300 mb-3">Adicione mais conteúdo ao seu plano:</h4>
+                <div className="space-y-3">
+                  {unselectedItems.map(id => {
+                    const service = findServiceById(id);
+                    if (!service) return null;
+                    return (
+                      <div key={id} className="flex justify-between items-center bg-slate-900/40 p-3 rounded-lg">
+                        <div>
+                          <p className="font-semibold text-white">{service.name}</p>
+                          <p className="text-sm text-blue-400">{formatCurrency(service.price)} /unidade</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => onCartUpdate(id, 0)} className="w-8 h-8 bg-slate-700 text-slate-300 font-bold rounded-full"><Minus className="w-4 h-4 mx-auto" /></button>
+                          <span className="font-bold text-white w-8 text-center">0</span>
+                          <button onClick={() => onCartUpdate(id, 1)} className="w-8 h-8 bg-slate-700 text-slate-300 font-bold rounded-full"><Plus className="w-4 h-4 mx-auto" /></button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )
+          }
+          return null;
+        })()}
+        
         {(() => {
           const totalPosts = Object.entries(cart).reduce((total, [id, quantity]) => {
             const serviceInfo = services
@@ -242,19 +278,50 @@ const saveBudgetToDatabase = async () => {
             return total;
           }, 0);
 
-          if (serviceType === 'recorrente' && totalPosts > 0) {
-            const averageWeekly = (totalPosts / 4).toFixed(1).replace('.0', '');
-            return (
-              <div className="my-6 text-center bg-slate-900/50 p-4 rounded-lg border border-blue-500/30">
-                <h4 className="text-lg font-bold text-blue-300 mb-1">Resumo de Conteúdo Contratado</h4>
-                <p className="text-white text-xl">
-                  Total de <span className="font-bold">{averageWeekly} posts</span> por semana, em média.
-                </p>
-              </div>
-            );
+          if (serviceType !== 'recorrente' || totalPosts === 0) {
+            return null;
           }
-          return null;
+          
+          const averageWeekly = totalPosts / 4;
+          
+          const getFeedback = (avg: number) => {
+            if (avg < 2) return { text: 'Volume muito baixo.', barColor: 'bg-red-500', tipColor: 'bg-red-500/10 text-red-400', tip: 'Uma frequência maior pode trazer resultados mais rápidos. Que tal adicionar mais alguns posts?' };
+            if (avg < 3) return { text: 'Volume baixo, mas um começo.', barColor: 'bg-orange-500', tipColor: 'bg-orange-500/10 text-orange-400', tip: 'Você está no caminho certo! Adicionar mais 1 ou 2 posts por semana pode acelerar seu crescimento.' };
+            if (avg < 4) return { text: 'Volume ideal para começar.', barColor: 'bg-yellow-500', tipColor: 'bg-yellow-500/10 text-yellow-300', tip: 'Excelente frequência para construir uma base sólida e engajar sua audiência de forma consistente.' };
+            if (avg < 5) return { text: 'Bom volume de postagens!', barColor: 'bg-green-500', tipColor: 'bg-green-500/10 text-green-400', tip: 'Com essa frequência, você se manterá relevante e presente para seu público.' };
+            return { text: 'Excelente volume, alta frequência!', barColor: 'bg-blue-500', tipColor: 'bg-blue-500/10 text-blue-300', tip: 'Plano de conteúdo robusto para dominar seu nicho e gerar autoridade máxima!' };
+          };
+
+          const feedback = getFeedback(averageWeekly);
+          const barWidthPercentage = Math.min((averageWeekly / 5) * 100, 100);
+
+          return (
+            <div className="my-6 text-center bg-slate-900/50 p-4 rounded-lg border border-blue-500/30">
+              <h4 className="text-lg font-bold text-blue-300 mb-2">Resumo de Frequência</h4>
+              <p className="text-white text-xl">
+                Isso equivale a <span className="font-bold text-2xl">{averageWeekly.toFixed(1).replace('.0', '')}</span> posts por semana, em média.
+              </p>
+              
+              <div className="w-full h-3 rounded-full bg-slate-700 my-3 overflow-hidden">
+                 <div 
+                    className={`h-full rounded-full ${feedback.barColor} transition-all duration-500`}
+                    style={{ width: `${barWidthPercentage}%` }}
+                  ></div>
+              </div>
+              
+              <p className={`text-center text-sm font-semibold h-5`}>
+                {feedback.text}
+              </p>
+              
+              {averageWeekly < 5 && (
+                <div className={`mt-3 text-xs p-2 rounded-md ${feedback.tipColor}`}>
+                   <span className="font-bold">Dica:</span> {feedback.tip}
+                </div>
+              )}
+            </div>
+          );
         })()}
+
         {/* Totals */}
         <div className="border-t-2 border-slate-600 pt-6 space-y-3">
           {discountApplied ? (

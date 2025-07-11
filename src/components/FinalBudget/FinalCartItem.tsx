@@ -1,5 +1,6 @@
 import React from 'react';
 import { Minus, Plus, X } from 'lucide-react';
+import { Service } from '../../types'; // Garanta que a importação do tipo Service está correta
 
 interface FinalCartItemProps {
   serviceId: string;
@@ -7,8 +8,8 @@ interface FinalCartItemProps {
   serviceType: 'recorrente' | 'avulso';
   onUpdate: (serviceId: string, quantity: number) => void;
   formatCurrency: (value: number) => string;
-  findServiceById: (id: string) => any;
-  calculateItemSubtotal: (service: any, quantity: number) => number;
+  findServiceById: (id: string) => Service | undefined;
+  calculateItemSubtotal: (service: Service, quantity: number) => number;
 }
 
 const FinalCartItem: React.FC<FinalCartItemProps> = ({
@@ -20,16 +21,20 @@ const FinalCartItem: React.FC<FinalCartItemProps> = ({
   findServiceById,
   calculateItemSubtotal
 }) => {
-  let service, itemTotal, displayName, isMonthly;
+  let service: Service | { name: string; type: 'fixed'; price: number };
+  let itemTotal: number;
+  let displayName: string;
+  let isMonthly: boolean;
 
   if (serviceId === 'trafego_investimento_custom') {
-    service = { name: 'Investimento em Anúncios', type: 'fixed' };
+    service = { name: 'Investimento em Anúncios', type: 'fixed', price: 0 };
     itemTotal = quantity;
     displayName = service.name;
     isMonthly = serviceType === 'recorrente';
   } else {
-    service = findServiceById(serviceId);
-    if (!service) return null;
+    const foundService = findServiceById(serviceId);
+    if (!foundService) return null;
+    service = foundService;
     itemTotal = calculateItemSubtotal(service, quantity);
     displayName = service.name;
     isMonthly = serviceType === 'recorrente' && 
@@ -83,6 +88,9 @@ const FinalCartItem: React.FC<FinalCartItemProps> = ({
       </button>
     );
   };
+  
+  const originalPrice = service.type === 'quantity' ? service.price * quantity : itemTotal;
+  const discountAmount = originalPrice - itemTotal;
 
   return (
     <div className="flex justify-between items-center bg-slate-900/50 p-4 rounded-lg">
@@ -90,13 +98,13 @@ const FinalCartItem: React.FC<FinalCartItemProps> = ({
         <p className="font-bold text-white">{displayName}</p>
         <p className="text-sm text-slate-400">
           {formatCurrency(itemTotal)} {isMonthly ? '/mês' : ''}
-          {service.type === 'quantity' && quantity > 1 && (
+          {service.type === 'quantity' && discountAmount > 0 && (
             <span className="text-green-400 font-semibold ml-2">
-              (Desconto aplicado!)
+              (Desconto: {formatCurrency(discountAmount)})
             </span>
           )}
         </p>
-        {serviceType === 'recorrente' && service.type === 'quantity' && (
+        {serviceType === 'recorrente' && service.type === 'quantity' && quantity > 0 && (
           <p className="text-xs text-blue-300 mt-1">
             (Equivale a ~{(quantity / 4).toFixed(1).replace('.0', '')} posts/semana)
           </p>

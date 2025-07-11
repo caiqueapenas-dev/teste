@@ -36,8 +36,8 @@ const CategorySelectionStep: React.FC<CategorySelectionStepProps> = ({
       <h2 className="text-3xl font-bold text-white mb-6 text-center">
         Quais serviços você está buscando?
       </h2>
-      <p className="text-slate-400 text-center mb-12 text-lg">
-        Selecione uma ou mais opções para personalizar seu plano.
+      <p className="text-slate-300 text-center mb-12 text-lg">
+        <b>Selecione <u>uma ou mais opções</u></b> para personalizar seu plano.
       </p>
       
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">

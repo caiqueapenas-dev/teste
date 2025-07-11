@@ -31,15 +31,19 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
 }) => {
   const isAdded = quantity > 0;
   const subtotal = calculateItemSubtotal(service, quantity);
+  
+  // Calcula o valor do desconto
+  const originalPrice = service.price * quantity;
+  const discountAmount = originalPrice - subtotal;
 
   const renderControls = () => {
     if (!isAvailable) return null;
 
     if (service.type === 'quantity') {
       return (
-        <div className="space-y-4">
+        <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-slate-400 font-medium">Quantidade:</span>
+            <span className="text-sm text-slate-400 font-medium">Unidades:</span>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => onQuantityChange(Math.max(0, quantity - 1))}
@@ -62,14 +66,26 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
               </button>
             </div>
           </div>
-          {subtotal > 0 && (
-            <div className="text-right text-slate-400 text-sm">
-              Subtotal: <span className="text-white font-semibold">{formatCurrency(subtotal)}</span>
-            </div>
-          )}
-          {serviceType === 'recorrente' && service.type === 'quantity' && quantity > 0 && (
-            <div className="text-center mt-3 text-sm text-blue-300 bg-blue-500/10 p-2 rounded-md">
-              Isso equivale a <strong>{ (quantity / 4).toFixed(1).replace('.0', '') } posts</strong> por semana, em média.
+          
+          {/* --- NOVO BLOCO DE INFORMAÇÕES DINÂMICAS --- */}
+          {quantity > 0 && (
+            <div className="text-right pt-2 space-y-1">
+              <div className="text-slate-400 text-sm">
+                Subtotal: <span className="text-white font-semibold">{formatCurrency(subtotal)}</span>
+              </div>
+              
+              <div className="text-xs">
+                {discountAmount > 0 && (
+                  <p className="text-green-400 font-medium">
+                    (Desconto: {formatCurrency(discountAmount)})
+                  </p>
+                )}
+                {serviceType === 'recorrente' && (
+                  <p className="text-blue-300 font-medium">
+                    (Equivale a ~{(quantity / 4).toFixed(1).replace('.0', '')} posts/semana)
+                  </p>
+                )}
+              </div>
             </div>
           )}
         </div>
