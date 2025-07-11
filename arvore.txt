@@ -1,0 +1,75 @@
+﻿├── .bolt
+│   ├── config.json
+│   └── prompt
+├── api
+│   ├── .htaccess
+│   ├── .htpasswd
+│   ├── dashboard.php
+│   ├── delete-lead.php
+│   ├── edit-lead.php
+│   ├── login.php
+│   ├── logout.php
+│   ├── save-budget.php
+│   ├── save-lead.php
+│   └── server.cjs
+├── public
+│   ├── google.png
+│   ├── IMG_3875.jpg
+│   ├── portfolio-desktop.jpg
+│   ├── portfolio-mobile.jpg
+│   ├── social-media.png
+│   ├── trafego-pago.png
+│   └── video.mp4
+├── src
+│   ├── components
+│   │   ├── BudgetSummary
+│   │   │   └── BudgetFooter.tsx
+│   │   ├── FinalBudget
+│   │   │   ├── FinalBudgetStep.tsx
+│   │   │   └── FinalCartItem.tsx
+│   │   ├── LandingPage
+│   │   │   └── LandingPage.tsx
+│   │   ├── Modal
+│   │   │   └── Modal.tsx
+│   │   ├── Modals
+│   │   │   ├── DetailsModal.tsx
+│   │   │   ├── DiscountModal.tsx
+│   │   │   └── InvestmentModal.tsx
+│   │   ├── ServiceConfig
+│   │   │   ├── ServiceCard.tsx
+│   │   │   └── ServiceConfigStep.tsx
+│   │   ├── SessionRestore
+│   │   │   └── SessionRestoreModal.tsx
+│   │   ├── Steps
+│   │   │   ├── CategorySelectionStep.tsx
+│   │   │   ├── ServiceTypeStep.tsx
+│   │   │   ├── UserDataStep.tsx
+│   │   │   └── WelcomeStep.tsx
+│   │   └── Toast
+│   │       └── ToastContainer.tsx
+│   ├── data
+│   │   └── services.ts
+│   ├── hooks
+│   │   ├── useCalculator.ts
+│   │   └── useToast.ts
+│   ├── pages
+│   │   └── MarketingBudget.tsx
+│   ├── types
+│   │   └── index.ts
+│   ├── App.tsx
+│   ├── index.css
+│   ├── main.tsx
+│   └── vite-env.d.ts
+├── .gitignore
+├── arvore.txt
+├── criar_projeto.bat
+├── eslint.config.js
+├── index.html
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── tailwind.config.js
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
